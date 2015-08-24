@@ -25,6 +25,14 @@
     	<groupId>com.jtouzy</groupId>
     	<artifactId>jto-dao-module</artifactId>
     </dependency>
+    <dependency>
+    	<groupId>org.postgresql</groupId>
+    	<artifactId>postgresql</artifactId>
+    </dependency>
+    <dependency>
+    	<groupId>org.jdom</groupId>
+    	<artifactId>jdom</artifactId>
+    </dependency>
   </dependencies>
   
   <build>
@@ -63,6 +71,16 @@
   			<groupId>com.jtouzy</groupId>
   			<artifactId>jto-dao-module</artifactId>
   			<version>0.0.1-SNAPSHOT</version>
+  		</dependency>
+  		<dependency>
+  			<groupId>org.postgresql</groupId>
+  			<artifactId>postgresql</artifactId>
+  			<version>9.4-1201-jdbc41</version>
+  		</dependency>
+  		<dependency>
+  			<groupId>org.jdom</groupId>
+  			<artifactId>jdom</artifactId>
+  			<version>2.0.2</version>
   		</dependency>
   	</dependencies>
   </dependencyManagement>
