@@ -1,9 +1,6 @@
 package com.jtouzy.cv.model.tools.back;
 
 import java.io.File;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -14,8 +11,6 @@ import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
 
 import com.google.common.collect.Lists;
-import com.jtouzy.cv.model.classes.Championship;
-import com.jtouzy.cv.model.classes.Comment;
 import com.jtouzy.dao.DAOManager;
 import com.jtouzy.dao.db.DBType;
 import com.jtouzy.dao.model.ColumnContext;
@@ -27,11 +22,12 @@ public class XmlBackUtils {
 
 	//private static Map<String, Map<String, Object>> xmlValues;
 	private static final List<String> tableList = Lists.newArrayList(
-		"sai", "cmp", "cmt", "chp"
+		"sai", "cmp", "chp", "eqi", "gym", "cmt"
 	);
 	private static final List<String> excludeColumns = Lists.newArrayList(
 		"ufbcmp",
-		"eqicmt", "notcmt"
+		"eqicmt", "notcmt",
+		"etaeqi"
 	);
 	private static final Map<String, Integer> summary = new LinkedHashMap<>();
 	
@@ -115,54 +111,13 @@ public class XmlBackUtils {
 			value = field.getValue();
 			if (String.valueOf(value).length() != 0) {
 				switch (columnContext.getType()) {
-					case INTEGER:
-						value = Integer.parseInt(field.getValue());
-						break;
 					case BOOLEAN:
 						if (value.equals("O") || value.equals("N")) {
 							value = value.equals("O");
-						} else {
-							value = Boolean.parseBoolean(field.getValue());
-						}
-						break;
-					case ENUM:
-						switch (columnContext.getName()) {
-							case "entcmt":
-								switch (String.valueOf(value)) {
-									case "NWS": value = Comment.Entity.NWS; break;
-									case "MAT": value = Comment.Entity.MAT; break;
-								}
-								break;
-							case "genchp":
-								switch (String.valueOf(value)) {
-									case "M": value = Championship.Gender.M; break;
-									case "X": value = Championship.Gender.X; break;
-									case "F": value = Championship.Gender.F; break;
-								}
-								break;
-							case "stachp":
-								switch (String.valueOf(value)) {
-									case "C": value = Championship.State.C; break;
-									case "V": value = Championship.State.V; break;
-								}
-								break;
-							case "typchp":
-								switch (String.valueOf(value)) {
-									case "CHP": value = Championship.Type.CHP; break;
-									case "CUP": value = Championship.Type.CUP; break;
-								}
-								break;
-							default:
-								break;
 						}
 						break;
 					case DATE:
-						valueStr = String.valueOf(value).replace(" ", "T");
-						if (valueStr.equals("0000-00-00T00:00:00")) {
-							value = null;
-						} else {
-							value = LocalDateTime.parse(valueStr);
-						}
+						value = String.valueOf(value).replace(" ", "T");
 						break;
 					case VARCHAR:
 						valueStr = String.valueOf(value);
@@ -179,6 +134,8 @@ public class XmlBackUtils {
 						valueStr = valueStr.replace("&ocirc;", "ô");
 						value = valueStr;
 						break;
+					case ENUM:
+					case INTEGER:
 					default:
 						break;
 				}
