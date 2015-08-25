@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import com.jtouzy.cv.model.classes.Competition;
 import com.jtouzy.cv.model.classes.Season;
+import com.jtouzy.cv.model.tools.back.DropboxAPI;
 import com.jtouzy.cv.model.tools.back.XmlBackUtils;
 import com.jtouzy.dao.DAOManager;
 import com.jtouzy.dao.errors.model.TableContextNotFoundException;

@@ -14,7 +14,9 @@ import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
 
 import com.google.common.collect.Lists;
+import com.jtouzy.cv.model.classes.Championship;
 import com.jtouzy.cv.model.classes.Comment;
+import com.jtouzy.dao.DAOManager;
 import com.jtouzy.dao.db.DBType;
 import com.jtouzy.dao.model.ColumnContext;
 import com.jtouzy.dao.model.ModelContext;
@@ -25,13 +27,20 @@ public class XmlBackUtils {
 
 	//private static Map<String, Map<String, Object>> xmlValues;
 	private static final List<String> tableList = Lists.newArrayList(
-		"sai", "cmp", "cmt"
+		"sai", "cmp", "cmt", "chp"
 	);
 	private static final List<String> excludeColumns = Lists.newArrayList(
 		"ufbcmp",
 		"eqicmt", "notcmt"
 	);
 	private static final Map<String, Integer> summary = new LinkedHashMap<>();
+	
+	public static void main(String[] args)
+	throws Exception {
+		DAOManager.init("com.jtouzy.cv.model.classes");
+		//DropboxAPI.downloadDumpFile();
+		XmlBackUtils.load();
+	}
 	
 	public static void load()
 	throws Exception {
@@ -44,7 +53,7 @@ public class XmlBackUtils {
 	private static Document getBackDocument()
 	throws Exception {
 		SAXBuilder builder = new SAXBuilder();
-		File xmlFile = new File("/Users/JTO/Desktop/CantalVolley/1&1_Sauvegarde/dbdump.xml");
+		File xmlFile = new File("dbdump.xml");
 		Document document = (Document) builder.build(xmlFile);
 		return document;
 	}
@@ -117,11 +126,34 @@ public class XmlBackUtils {
 						}
 						break;
 					case ENUM:
-						if (columnContext.getName().equals("entcmt")) {
-							switch (String.valueOf(value)) {
-								case "NWS": value = Comment.Entity.NWS; break;
-								case "MAT": value = Comment.Entity.MAT; break;
-							}
+						switch (columnContext.getName()) {
+							case "entcmt":
+								switch (String.valueOf(value)) {
+									case "NWS": value = Comment.Entity.NWS; break;
+									case "MAT": value = Comment.Entity.MAT; break;
+								}
+								break;
+							case "genchp":
+								switch (String.valueOf(value)) {
+									case "M": value = Championship.Gender.M; break;
+									case "X": value = Championship.Gender.X; break;
+									case "F": value = Championship.Gender.F; break;
+								}
+								break;
+							case "stachp":
+								switch (String.valueOf(value)) {
+									case "C": value = Championship.State.C; break;
+									case "V": value = Championship.State.V; break;
+								}
+								break;
+							case "typchp":
+								switch (String.valueOf(value)) {
+									case "CHP": value = Championship.Type.CHP; break;
+									case "CUP": value = Championship.Type.CUP; break;
+								}
+								break;
+							default:
+								break;
 						}
 						break;
 					case DATE:
