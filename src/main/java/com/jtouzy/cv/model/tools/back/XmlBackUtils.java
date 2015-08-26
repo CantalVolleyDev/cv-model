@@ -22,12 +22,13 @@ public class XmlBackUtils {
 
 	//private static Map<String, Map<String, Object>> xmlValues;
 	private static final List<String> tableList = Lists.newArrayList(
-		"sai", "cmp", "chp", "eqi", "gym", "cmt"
+		"usr", "sai", "cmp", "chp", "eqi", "gym", "cmt"
 	);
 	private static final List<String> excludeColumns = Lists.newArrayList(
 		"ufbcmp",
 		"eqicmt", "notcmt",
-		"etaeqi"
+		"etaeqi",
+		"gkeusr"
 	);
 	private static final Map<String, Integer> summary = new LinkedHashMap<>();
 	
