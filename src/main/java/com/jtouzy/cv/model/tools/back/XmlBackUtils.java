@@ -1,6 +1,8 @@
 package com.jtouzy.cv.model.tools.back;
 
 import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -10,7 +12,13 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
+import com.jtouzy.cv.model.dao.CompetitionDAO;
+import com.jtouzy.cv.model.dao.SeasonDAO;
+import com.jtouzy.cv.model.tools.generate.DBGenerateTool;
+import com.jtouzy.dao.DAO;
 import com.jtouzy.dao.DAOManager;
 import com.jtouzy.dao.db.DBType;
 import com.jtouzy.dao.model.ColumnContext;
@@ -20,7 +28,8 @@ import com.jtouzy.dao.reflect.ObjectUtils;
 
 public class XmlBackUtils {
 
-	//private static Map<String, Map<String, Object>> xmlValues;
+	private static Connection connection;
+	private static Multimap<TableContext, Object> values;
 	private static final List<String> tableList = Lists.newArrayList(
 		"usr", "sai", "cmp", "chp", "eqi", "gym", "cmt"
 	);
@@ -30,21 +39,32 @@ public class XmlBackUtils {
 		"etaeqi",
 		"gkeusr"
 	);
-	private static final Map<String, Integer> summary = new LinkedHashMap<>();
+	private static final Map<String, Integer> objectsSummary = new LinkedHashMap<>();
+	private static final Map<String, Integer> dataSummary = new LinkedHashMap<>();
 	
 	public static void main(String[] args)
 	throws Exception {
+		// Initialisation des classes modèles
 		DAOManager.init("com.jtouzy.cv.model.classes");
+		// Initialisation de la connexion
+		connection = DriverManager.getConnection("jdbc:postgresql://5.135.146.110:5432/jto_cvapi_dvt", "postgres", "jtogri%010811sqladmin");
+		// Téléchargement du fichier dump depuis dropbox (si nécessaire)
 		//DropboxAPI.downloadDumpFile();
-		XmlBackUtils.load();
+		// Génération des tables
+		DBGenerateTool.main(null);
+		// Chargement des données depuis le dump dans des objets modèle
+		load();
+		// Création en base des objets modèle 
+		createData();
 	}
 	
 	public static void load()
 	throws Exception {
 		//xmlValues = new HashMap<String, Map<String,Object>>();
 		Document doc = getBackDocument();
+		values = HashMultimap.create();
 		loadDatabase(doc.getRootElement().getChild("database"));
-		System.out.println(summary);
+		System.out.println(objectsSummary);
 	}
 	
 	private static Document getBackDocument()
@@ -91,7 +111,7 @@ public class XmlBackUtils {
 		Iterator<Element> it = rows.iterator();
 		while (it.hasNext()) 
 			loadRowForTable(tableContext, it.next());
-		summary.put(tableContext.getName(), rows.size());
+		objectsSummary.put(tableContext.getName(), rows.size());
 	}
 	
 	private static void loadRowForTable(TableContext tableContext, Element rowElement)
@@ -147,6 +167,43 @@ public class XmlBackUtils {
 			}
 			ObjectUtils.setValue(instance, columnContext, value);
 		}
-		System.out.println(instance);
+		values.put(tableContext, instance);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static <D extends DAO<T>,T> void createData()
+	throws Exception {
+		Map<String,Class<D>> daoClasses = new LinkedHashMap<>();
+		daoClasses.put("sai", (Class<D>)SeasonDAO.class);
+		daoClasses.put("cmp", (Class<D>)CompetitionDAO.class);
+		
+		try {
+			TableContext context = null;
+			Map.Entry<String, Class<D>> entry;
+			Iterator<Map.Entry<String, Class<D>>> it = daoClasses.entrySet().iterator();
+			while (it.hasNext()) {
+				entry = it.next();
+				System.out.println("Création des données de la table " + entry.getKey() + "...");
+				context = ModelContext.getTableContext(entry.getKey());
+				createFor(context, entry.getValue());
+			}
+		} finally {
+			System.out.println(dataSummary);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static <D extends DAO<T>,T> void createFor(TableContext tableContext, Class<D> clazz)
+	throws Exception {
+		D dao = DAOManager.getDAO(connection, clazz);
+		Iterator<Object> it = values.get(tableContext).iterator();
+		Object object;
+		Integer count = 0;
+		while (it.hasNext()) {
+			object = it.next();
+			dao.create((T)object);
+			count ++;
+			dataSummary.put(tableContext.getName(), count);
+		}
 	}
 }

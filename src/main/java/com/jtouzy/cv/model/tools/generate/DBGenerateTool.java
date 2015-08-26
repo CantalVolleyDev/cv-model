@@ -10,10 +10,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
-import com.jtouzy.cv.model.classes.Competition;
-import com.jtouzy.cv.model.classes.Season;
-import com.jtouzy.cv.model.tools.back.DropboxAPI;
-import com.jtouzy.cv.model.tools.back.XmlBackUtils;
 import com.jtouzy.dao.DAOManager;
 import com.jtouzy.dao.db.DBType;
 import com.jtouzy.dao.errors.model.TableContextNotFoundException;
@@ -25,15 +21,9 @@ public class DBGenerateTool {
 
 	public static void main(String[] args)
 	throws Exception {
-		/*try {
-			DAOManager.init("com.jtouzy.cv.model.classes");
-			Connection connection = DriverManager.getConnection("jdbc:postgresql://5.135.146.110:5432/jto_cvapi_dvt", "postgres", "jtogri%010811sqladmin");
-			DBUtils.createAllTables(connection, Season.class, Competition.class);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}*/
 		DAOManager.init("com.jtouzy.cv.model.classes");
-		createAllTables(null);
+		Connection connection = DriverManager.getConnection("jdbc:postgresql://5.135.146.110:5432/jto_cvapi_dvt", "postgres", "jtogri%010811sqladmin");
+		createAllTables(connection);
 	}
 	
 	public static final void createAllTables(Connection connection)
@@ -61,21 +51,33 @@ public class DBGenerateTool {
 		fields.stream().forEach(f -> {
 			sql.append("\t")
 			   .append(f.getName())
-			   .append(" ")
-			   .append(f.getType().getSqlSyntax());
-			if (f.getType().isLengthSensitive()) {
-				sql.append("(")
-				   .append(f.getLength())
-				   .append(")");
-			}
+			   .append(" ");
 			if (f.getType() == DBType.ENUM) {
-				sql.append("(")
+				StringBuilder typeName = new StringBuilder();
+				typeName.append(tableContext.getName())
+				        .append("_")
+				        .append(f.getName());
+				crt.append("drop type if exists ")
+				   .append(typeName)
+				   .append(";").append("\n");
+				crt.append("create type ")
+				   .append(typeName)
+				   .append(" as enum ")
+				   .append("(")
 				   .append(Lists.newArrayList(f.getFieldContext().getField().getType().getEnumConstants())
 						        .stream()
 						        .map(ec -> {
 						        	return new StringBuilder("'").append(ec.toString()).append("'");
 						        })
 						        .collect(Collectors.joining(",")))
+				   .append(");").append("\n");
+				sql.append(typeName);
+			} else {
+				sql.append(f.getType().getSqlSyntax());
+			}
+			if (f.getType().isLengthSensitive()) {
+				sql.append("(")
+				   .append(f.getLength())
 				   .append(")");
 			}
 			if (f.isIdentifier()) {
@@ -92,6 +94,9 @@ public class DBGenerateTool {
 					   .append("_id')");
 				}
 			}
+			if (f.isRelationColumn()) {
+				relationFields.add(f);
+			}
 			sql.append(",").append("\n");
 		});
 		sql.append("\t")
@@ -99,8 +104,9 @@ public class DBGenerateTool {
 		   .append(idFields.stream()
 		                   .map(f -> f.getName())
 		                   .collect(Collectors.joining(",")))
-		   .append(")").append("\n");
+		   .append(")");
 		crt.append(sql)
+		   .append("\n")
 		   .append(");");
 		System.out.println(crt);
 		
