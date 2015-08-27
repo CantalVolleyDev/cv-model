@@ -3,13 +3,11 @@ package com.jtouzy.cv.model.tools.back;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -27,6 +25,7 @@ import com.jtouzy.cv.model.dao.ChampionshipDAO;
 import com.jtouzy.cv.model.dao.CommentDAO;
 import com.jtouzy.cv.model.dao.CompetitionDAO;
 import com.jtouzy.cv.model.dao.GymDAO;
+import com.jtouzy.cv.model.dao.MatchDAO;
 import com.jtouzy.cv.model.dao.NewsDAO;
 import com.jtouzy.cv.model.dao.SeasonDAO;
 import com.jtouzy.cv.model.dao.TeamDAO;
@@ -51,7 +50,7 @@ public class XmlBackUtils {
 	private static Connection connection;
 	private static Multimap<TableContext, Object> values;
 	private static final List<String> tableList = Lists.newArrayList(
-		"usr", "sai", "cmp", "chp", "eqi", "gym", "cmt"
+		"usr", "sai", "cmp", "chp", "mat", "eqi", "pma", "gym", "cmt"
 	);
 	private static final List<String> excludeColumns = Lists.newArrayList(
 		"ufbcmp",
@@ -221,6 +220,7 @@ public class XmlBackUtils {
 		News n1 = new News();
 		User usr = new User();
 		usr.setIdentifier(1);
+		n1.setIdentifier(1);
 		n1.setAuthor(usr);
 		n1.setContent("Test");
 		n1.setCreationDate(LocalDateTime.of(2015, 8, 27, 19, 00));
@@ -239,6 +239,7 @@ public class XmlBackUtils {
 		daoClasses.put("sai", (Class<D>)SeasonDAO.class);
 		daoClasses.put("cmp", (Class<D>)CompetitionDAO.class);
 		daoClasses.put("chp", (Class<D>)ChampionshipDAO.class);
+		daoClasses.put("mat", (Class<D>)MatchDAO.class);
 		daoClasses.put("cmt", (Class<D>)CommentDAO.class);
 		daoClasses.put("nws", (Class<D>)NewsDAO.class);
 		
