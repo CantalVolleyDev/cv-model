@@ -16,7 +16,7 @@ public class User {
 	private String name;
 	@DAOTableField(name = "preusr", length = 50, required = true, type = DBType.VARCHAR)
 	private String firstName;
-	@DAOTableField(name = "pwdusr", length = 130, required = true, type = DBType.VARCHAR)
+	@DAOTableField(name = "pwdusr", length = 130, type = DBType.VARCHAR)
 	private String password;
 	@DAOTableField(name = "dnsusr", type = DBType.DATE)
 	private LocalDate birthDate;

@@ -93,6 +93,8 @@ public class DBGenerateTool {
 					   .append(tableContext.getName())
 					   .append("_id')");
 				}
+			} else if (f.isRequired()) {
+				sql.append(" not null");
 			}
 			if (f.isRelationColumn()) {
 				relationFields.add(f);

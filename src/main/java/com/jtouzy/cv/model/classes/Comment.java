@@ -1,6 +1,6 @@
 package com.jtouzy.cv.model.classes;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com.jtouzy.dao.annotations.DAOTable;
 import com.jtouzy.dao.annotations.DAOTableField;
@@ -16,8 +16,8 @@ public class Comment {
 	private Integer entityValue;
 	@DAOTableField(name = "usrcmt", required = true, type = DBType.INTEGER)
 	private Integer user;
-	@DAOTableField(name = "datcmt", required = true, type = DBType.DATE)
-	private LocalDate date;
+	@DAOTableField(name = "datcmt", required = true, type = DBType.DATETIME)
+	private LocalDateTime date;
 	@DAOTableField(name = "txtcmt", length = 4000, required = true, type = DBType.VARCHAR)
 	private String content;
 	
@@ -45,10 +45,10 @@ public class Comment {
 	public void setUser(Integer user) {
 		this.user = user;
 	}
-	public LocalDate getDate() {
+	public LocalDateTime getDate() {
 		return date;
 	}
-	public void setDate(LocalDate date) {
+	public void setDate(LocalDateTime date) {
 		this.date = date;
 	}
 	public String getContent() {
