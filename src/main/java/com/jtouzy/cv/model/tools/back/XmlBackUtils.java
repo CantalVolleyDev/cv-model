@@ -15,8 +15,13 @@ import org.jdom2.input.SAXBuilder;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.jtouzy.cv.model.dao.ChampionshipDAO;
+import com.jtouzy.cv.model.dao.CommentDAO;
 import com.jtouzy.cv.model.dao.CompetitionDAO;
+import com.jtouzy.cv.model.dao.GymDAO;
 import com.jtouzy.cv.model.dao.SeasonDAO;
+import com.jtouzy.cv.model.dao.TeamDAO;
+import com.jtouzy.cv.model.dao.UserDAO;
 import com.jtouzy.cv.model.tools.generate.DBGenerateTool;
 import com.jtouzy.dao.DAO;
 import com.jtouzy.dao.DAOManager;
@@ -174,8 +179,13 @@ public class XmlBackUtils {
 	private static <D extends DAO<T>,T> void createData()
 	throws Exception {
 		Map<String,Class<D>> daoClasses = new LinkedHashMap<>();
+		daoClasses.put("usr", (Class<D>)UserDAO.class);
+		daoClasses.put("eqi", (Class<D>)TeamDAO.class);
+		daoClasses.put("gym", (Class<D>)GymDAO.class);
 		daoClasses.put("sai", (Class<D>)SeasonDAO.class);
 		daoClasses.put("cmp", (Class<D>)CompetitionDAO.class);
+		daoClasses.put("chp", (Class<D>)ChampionshipDAO.class);
+		daoClasses.put("cmt", (Class<D>)CommentDAO.class);
 		
 		try {
 			TableContext context = null;
