@@ -8,7 +8,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.jtouzy.dao.db.DBType2;
+import com.jtouzy.dao.db.DBTypeConstants;
 
 @Entity
 @Table(name = "eqi")
@@ -19,10 +19,10 @@ public class Team {
 	
 	@Id
 	@GeneratedValue
-	@Column(name = IDENTIFIER_FIELD, columnDefinition = DBType2.INTEGER)
+	@Column(name = IDENTIFIER_FIELD, nullable = false, columnDefinition = DBTypeConstants.INTEGER)
 	private Integer identifier;
 	
-	@Column(name = LABEL_FIELD, length = LABEL_FIELD_LENGTH, columnDefinition = DBType2.VARCHAR)
+	@Column(name = LABEL_FIELD, length = LABEL_FIELD_LENGTH, nullable = false, columnDefinition = DBTypeConstants.VARCHAR)
 	@NotNull(message = "Le libellé doit être renseigné")
 	@Size(max = LABEL_FIELD_LENGTH, message = "La taille du libellé doit être au maximum de {max}")
 	private String label;

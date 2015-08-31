@@ -6,12 +6,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.jtouzy.dao.annotations.DAOTableRelation;
-import com.jtouzy.dao.db.DBType2;
+import com.jtouzy.dao.db.DBTypeConstants;
 
 @Entity
 @Table(name = "cmp")
@@ -36,52 +36,52 @@ public class Competition {
 	
 	@Id
 	@GeneratedValue
-	@Column(name = IDENTIFIER_FIELD, columnDefinition = DBType2.INTEGER)
+	@Column(name = IDENTIFIER_FIELD, nullable = false, columnDefinition = DBTypeConstants.INTEGER)
 	private Integer identifier;
 	
-	@DAOTableRelation(
-		column = @Column(name = SEASON_FIELD, columnDefinition = DBType2.INTEGER), 
-		relationColumn = Season.IDENTIFIER_FIELD
-	)	
+	@JoinColumn(
+		name = SEASON_FIELD, nullable = false, columnDefinition = DBTypeConstants.INTEGER, 
+		referencedColumnName = Season.IDENTIFIER_FIELD
+	)
 	@NotNull(message = "La saison doit être renseignée")
 	private Season season;
 	
-	@Column(name = CVT_FIELD, columnDefinition = DBType2.BOOLEAN)
+	@Column(name = CVT_FIELD, nullable = false, columnDefinition = DBTypeConstants.BOOLEAN)
 	@NotNull(message = "La zone 'CVT' doit être renseignée")
 	private Boolean cvt;
 	
-	@Column(name = LABEL_FIELD, length = LABEL_FIELD_LENGTH, columnDefinition = DBType2.VARCHAR)
+	@Column(name = LABEL_FIELD, length = LABEL_FIELD_LENGTH, nullable = false, columnDefinition = DBTypeConstants.VARCHAR)
 	@NotNull(message = "Le libellé doit être renseigné")
 	@Size(max = LABEL_FIELD_LENGTH, message = "La taille du libellé doit être au maximum de {max}")
 	private String label;
 	
-	@Column(name = DESCRIPTION_FIELD, length = DESCRIPTION_FIELD_LENGTH, columnDefinition = DBType2.VARCHAR)
+	@Column(name = DESCRIPTION_FIELD, length = DESCRIPTION_FIELD_LENGTH, columnDefinition = DBTypeConstants.VARCHAR)
 	@Size(max = DESCRIPTION_FIELD_LENGTH, message = "La taille de la description doit être au maximum de {max}")
 	private String description;
 	
-	@Column(name = ORDER_FIELD, columnDefinition = DBType2.INTEGER)
+	@Column(name = ORDER_FIELD, nullable = false, columnDefinition = DBTypeConstants.INTEGER)
 	@NotNull(message = "L'ordre doit être renseigné")
 	private Integer order;
 	
-	@Column(name = CVT_CITY_FIELD, length = CVT_CITY_FIELD_LENGTH, columnDefinition = DBType2.VARCHAR)
+	@Column(name = CVT_CITY_FIELD, length = CVT_CITY_FIELD_LENGTH, columnDefinition = DBTypeConstants.VARCHAR)
 	@Size(max = CVT_CITY_FIELD_LENGTH, message = "La taille du lieu doit être au maximum de {max}")
 	private String cvtCity;
 	
-	@Column(name = DATE_FIELD, columnDefinition = DBType2.DATETIME)
+	@Column(name = DATE_FIELD, columnDefinition = DBTypeConstants.DATETIME)
 	private LocalDateTime cvtDate;
 	
-	@Column(name = LATITUDE_FIELD, length = LATITUDE_FIELD_LENGTH, columnDefinition = DBType2.VARCHAR)
+	@Column(name = LATITUDE_FIELD, length = LATITUDE_FIELD_LENGTH, columnDefinition = DBTypeConstants.VARCHAR)
 	@Size(max = LATITUDE_FIELD_LENGTH, message = "La taille de la latitude doit être au maximum de {max}")
 	private String cvtLatitude;
 	
-	@Column(name = LONGITUDE_FIELD, length = LONGITUDE_FIELD_LENGTH, columnDefinition = DBType2.VARCHAR)
+	@Column(name = LONGITUDE_FIELD, length = LONGITUDE_FIELD_LENGTH, columnDefinition = DBTypeConstants.VARCHAR)
 	@Size(max = LONGITUDE_FIELD_LENGTH, message = "La taille de la longitude doit être au maximum de {max}")
 	private String cvtLongitude;
 	
-	@Column(name = STATE_FIELD, length = 1, columnDefinition = DBType2.ENUM)
+	@Column(name = STATE_FIELD, length = 1, columnDefinition = DBTypeConstants.ENUM)
 	private Competition.State state;
 	
-	@Column(name = GROUP_FIELD, columnDefinition = DBType2.INTEGER)
+	@Column(name = GROUP_FIELD, columnDefinition = DBTypeConstants.INTEGER)
 	private Integer groupNumber;
 	
 	public Integer getIdentifier() {

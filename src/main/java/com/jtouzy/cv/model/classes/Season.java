@@ -8,7 +8,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.jtouzy.dao.db.DBType2;
+import com.jtouzy.dao.db.DBTypeConstants;
 
 @Entity
 @Table(name = "sai")
@@ -23,24 +23,24 @@ public class Season {
 	
 	@Id
 	@GeneratedValue
-	@Column(name = Season.IDENTIFIER_FIELD, columnDefinition = DBType2.INTEGER)
+	@Column(name = Season.IDENTIFIER_FIELD, nullable = false, columnDefinition = DBTypeConstants.INTEGER)
 	private Integer identifier;
 	
-	@Column(name = Season.START_YEAR_FIELD, length = START_YEAR_FIELD_LENGTH, columnDefinition = DBType2.VARCHAR)
+	@Column(name = Season.START_YEAR_FIELD, length = START_YEAR_FIELD_LENGTH, nullable = false, columnDefinition = DBTypeConstants.VARCHAR)
 	@NotNull(message = "L'année de commencement doit être renseignée")
 	@Size(max = START_YEAR_FIELD_LENGTH, message = "La taille de l'année de commencement doit être au maximum de {max}")
 	private String startYear;
 	
-	@Column(name = Season.END_YEAR_FIELD, length = END_YEAR_FIELD_LENGTH, columnDefinition = DBType2.VARCHAR)
+	@Column(name = Season.END_YEAR_FIELD, length = END_YEAR_FIELD_LENGTH, nullable = false, columnDefinition = DBTypeConstants.VARCHAR)
 	@NotNull(message = "L'année de fin doit être renseignée")
 	@Size(max = END_YEAR_FIELD_LENGTH, message = "La taille de l'année de fin doit être au maximum de {max}")
 	private String endYear;
 	
-	@Column(name = Season.CURRENT_FIELD, columnDefinition = DBType2.BOOLEAN)
+	@Column(name = Season.CURRENT_FIELD, nullable = false, columnDefinition = DBTypeConstants.BOOLEAN)
 	@NotNull(message = "La zone 'Saison courante' doit être renseignée")
 	private Boolean current;
 	
-	@Column(name = Season.REGISTRATION_OPEN_FIELD, columnDefinition = DBType2.BOOLEAN)
+	@Column(name = Season.REGISTRATION_OPEN_FIELD, columnDefinition = DBTypeConstants.BOOLEAN)
 	private Boolean registrationOpen;
 
 	public Integer getIdentifier() {

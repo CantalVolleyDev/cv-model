@@ -6,12 +6,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.jtouzy.dao.annotations.DAOTableRelation;
-import com.jtouzy.dao.db.DBType2;
+import com.jtouzy.dao.db.DBTypeConstants;
 
 @Entity
 @Table(name = "nws")
@@ -28,34 +28,34 @@ public class News {
 	
 	@Id
 	@GeneratedValue
-	@Column(name = IDENTIFIER_FIELD, columnDefinition = DBType2.INTEGER)
+	@Column(name = IDENTIFIER_FIELD, nullable = false, columnDefinition = DBTypeConstants.INTEGER)
 	private Integer identifier;
 	
-	@Column(name = TITLE_FIELD, length = TITLE_FIELD_LENGTH, columnDefinition = DBType2.VARCHAR)
+	@Column(name = TITLE_FIELD, length = TITLE_FIELD_LENGTH, nullable = false, columnDefinition = DBTypeConstants.VARCHAR)
 	@NotNull(message = "Le titre doit être renseigné")
 	@Size(max = TITLE_FIELD_LENGTH, message = "La taille du titre doit être au maximum de {max}")
 	private String title;
 	
-	@Column(name = CONTENT_FIELD, length = CONTENT_FIELD_LENGTH, columnDefinition = DBType2.VARCHAR)
+	@Column(name = CONTENT_FIELD, length = CONTENT_FIELD_LENGTH, nullable = false, columnDefinition = DBTypeConstants.VARCHAR)
 	@NotNull(message = "Le contenu doit être renseigné")
 	@Size(max = CONTENT_FIELD_LENGTH, message = "La taille du contenu doit être au maximum de {max}")
 	private String content;
 	
-	@DAOTableRelation(
-		column = @Column(name = "autnws", columnDefinition = DBType2.INTEGER),
-		relationColumn = User.IDENTIFIER_FIELD
+	@JoinColumn(
+		name = AUTHOR_FIELD, nullable = false, columnDefinition = DBTypeConstants.INTEGER,
+		referencedColumnName = User.IDENTIFIER_FIELD
 	)
 	@NotNull(message = "L'auteur doit être renseigné")
 	private User author;
 	
-	@Column(name = CREATION_DATE_FIELD, columnDefinition = DBType2.DATETIME)
+	@Column(name = CREATION_DATE_FIELD, nullable = false, columnDefinition = DBTypeConstants.DATETIME)
 	@NotNull(message = "La date de création doit être renseignée")
 	private LocalDateTime creationDate;
 	
-	@Column(name = PUBLISH_DATE_FIELD, columnDefinition = DBType2.DATETIME)
+	@Column(name = PUBLISH_DATE_FIELD, columnDefinition = DBTypeConstants.DATETIME)
 	private LocalDateTime publishDate;
 	
-	@Column(name = STATE_FIELD, length = 1, columnDefinition = DBType2.ENUM)
+	@Column(name = STATE_FIELD, length = 1, nullable = false, columnDefinition = DBTypeConstants.ENUM)
 	@NotNull(message = "L'état doit être renseigné")
 	private News.State state;
 	

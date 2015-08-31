@@ -1,29 +1,40 @@
 package com.jtouzy.cv.model.classes;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import com.jtouzy.dao.annotations.DAOTable;
-import com.jtouzy.dao.annotations.DAOTableField;
-import com.jtouzy.dao.annotations.DAOTableRelation;
-import com.jtouzy.dao.db.DBType;
+import com.jtouzy.dao.db.DBTypeConstants;
 
-@DAOTable(tableName = "pma")
+@Entity
+@Table(name = "pma")
 public class MatchPlayer {
-	@DAOTableRelation(
-		column = @DAOTableField(id = true, name = "matpma", type = DBType.INTEGER),
-		relationColumn = "nummat"
+	public static final String MATCH_FIELD = "matpma";
+	public static final String TEAM_FIELD = "eqipma";
+	public static final String USER_FIELD = "usrpma";
+	
+	@Id
+	@JoinColumn(
+		name = MATCH_FIELD, nullable = false, columnDefinition = DBTypeConstants.INTEGER,
+		referencedColumnName = Match.IDENTIFIER_FIELD
 	)
 	@NotNull(message = "Le match doit être renseigné")
 	private Match match;
-	@DAOTableRelation(
-		column = @DAOTableField(id = true, name = "eqipma", type = DBType.INTEGER),
-		relationColumn = "numeqi"
+	
+	@Id
+	@JoinColumn(
+		name = TEAM_FIELD, nullable = false, columnDefinition = DBTypeConstants.INTEGER,
+		referencedColumnName = Team.IDENTIFIER_FIELD
 	)
 	@NotNull(message = "L'équipe doit être renseignée")
 	private Team team;
-	@DAOTableRelation(
-		column = @DAOTableField(id = true, name = "usrpma", type = DBType.INTEGER),
-		relationColumn = "numusr"
+	
+	@Id
+	@JoinColumn(
+		name = USER_FIELD, nullable = false, columnDefinition = DBTypeConstants.INTEGER,
+		referencedColumnName = User.IDENTIFIER_FIELD
 	)
 	@NotNull(message = "Le joueur doit être renseigné")
 	private User player;
@@ -45,5 +56,18 @@ public class MatchPlayer {
 	}
 	public void setPlayer(User player) {
 		this.player = player;
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("MatchPlayer [match=");
+		builder.append(match);
+		builder.append(", team=");
+		builder.append(team);
+		builder.append(", player=");
+		builder.append(player);
+		builder.append("]");
+		return builder.toString();
 	}
 }

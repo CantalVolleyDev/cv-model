@@ -8,7 +8,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.jtouzy.dao.db.DBType2;
+import com.jtouzy.dao.db.DBTypeConstants;
 
 @Entity
 @Table(name = "usr")
@@ -27,35 +27,35 @@ public class User {
 	public static final int PHONE_FIELD_LENGTH = 20;
 	public static final String ADMINISTRATOR_FIELD = "admusr";
 	
-	@Column(name = IDENTIFIER_FIELD, columnDefinition = DBType2.INTEGER, nullable = false)
+	@Column(name = IDENTIFIER_FIELD, nullable = false, columnDefinition = DBTypeConstants.INTEGER)
 	private Integer identifier;
 	
-	@Column(name = MAIL_FIELD, length = MAIL_FIELD_LENGTH, columnDefinition = DBType2.VARCHAR)
+	@Column(name = MAIL_FIELD, length = MAIL_FIELD_LENGTH, columnDefinition = DBTypeConstants.VARCHAR)
 	@Size(max = MAIL_FIELD_LENGTH, message = "La taille de l'e-mail doit être au maximum de {max}")
 	private String mail;
 	
-	@Column(name = NAME_FIELD, length = NAME_FIELD_LENGTH, columnDefinition = DBType2.VARCHAR)
+	@Column(name = NAME_FIELD, length = NAME_FIELD_LENGTH, nullable = false, columnDefinition = DBTypeConstants.VARCHAR)
 	@NotNull(message = "Le nom doit être renseigné")
 	@Size(max = NAME_FIELD_LENGTH, message = "La taille du nom doit être au maximum de {max}")
 	private String name;
 	
-	@Column(name = FIRST_NAME_FIELD, length = FIRST_NAME_FIELD_LENGTH, columnDefinition = DBType2.VARCHAR)
+	@Column(name = FIRST_NAME_FIELD, length = FIRST_NAME_FIELD_LENGTH, nullable = false, columnDefinition = DBTypeConstants.VARCHAR)
 	@NotNull(message = "Le prénom doit être renseigné")
 	@Size(max = FIRST_NAME_FIELD_LENGTH, message = "La taille du prénom doit être au maximum de {max}")
 	private String firstName;
 	
-	@Column(name = PASSWORD_FIELD, length = PASSWORD_FIELD_LENGTH, columnDefinition = DBType2.VARCHAR)
+	@Column(name = PASSWORD_FIELD, length = PASSWORD_FIELD_LENGTH, columnDefinition = DBTypeConstants.VARCHAR)
 	@Size(max = PASSWORD_FIELD_LENGTH, message = "La taille du mot de passe doit être au maximum de {max}")
 	private String password;
 
-	@Column(name = BIRTHDATE_FIELD, columnDefinition = DBType2.DATE)
+	@Column(name = BIRTHDATE_FIELD, columnDefinition = DBTypeConstants.DATE)
 	private LocalDate birthDate;
 	
-	@Column(name = PHONE_FIELD, length = PHONE_FIELD_LENGTH, columnDefinition = DBType2.VARCHAR)
+	@Column(name = PHONE_FIELD, length = PHONE_FIELD_LENGTH, columnDefinition = DBTypeConstants.VARCHAR)
 	@Size(max = PHONE_FIELD_LENGTH, message = "La taille du téléphone doit être au maximum de {max}")
 	private String phone;
 	
-	@Column(name = ADMINISTRATOR_FIELD, columnDefinition = DBType2.VARCHAR)
+	@Column(name = ADMINISTRATOR_FIELD, nullable = false, columnDefinition = DBTypeConstants.VARCHAR)
 	@NotNull(message = "La zone 'Administrateur' doit être renseignée")
 	private Boolean administrator;
 	
