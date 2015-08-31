@@ -1,23 +1,29 @@
 package com.jtouzy.cv.model.classes;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import com.jtouzy.dao.annotations.DAOTable;
-import com.jtouzy.dao.annotations.DAOTableField;
 import com.jtouzy.dao.annotations.DAOTableRelation;
-import com.jtouzy.dao.db.DBType;
+import com.jtouzy.dao.db.DBType2;
 
-@DAOTable(tableName = "eqs")
+@Table(name = "eqs")
 public class SeasonTeam {
+	public static final String TEAM_FIELD = "eqieqs";
+	public static final String SEASON_FIELD = "saieqs";
+	
+	@Id
 	@DAOTableRelation(
-		column = @DAOTableField(id = true, name = "eqieqs", type = DBType.INTEGER),
-		relationColumn = "numeqi"
+		column = @Column(name = TEAM_FIELD, columnDefinition = DBType2.INTEGER),
+		relationColumn = Team.IDENTIFIER_FIELD
 	)
 	@NotNull(message = "L'équipe doit être renseignée")
 	private Team team;
+	
 	@DAOTableRelation(
-		column = @DAOTableField(id = true, name = "saieqs", type = DBType.INTEGER),
-		relationColumn = "numsai"
+		column = @Column(name = SEASON_FIELD, columnDefinition = DBType2.INTEGER),
+		relationColumn = Season.IDENTIFIER_FIELD
 	)
 	@NotNull(message = "La saison doit être renseignée")
 	private Season season;

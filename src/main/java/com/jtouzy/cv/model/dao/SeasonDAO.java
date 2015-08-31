@@ -27,7 +27,7 @@ public class SeasonDAO extends AbstractSingleIdentifierDAO<Season> {
 	throws QueryException {
 		try {
 			Query<Season> query = Query.build(this.connection, this.daoClass)
-			                           .equalsClause(Season.CURRENT, true);
+			                           .equalsClause(Season.CURRENT_FIELD, true);
 			query.printSql();
 			return query.one();
 		} catch (TableContextNotFoundException | StatementBuildException ex) {
