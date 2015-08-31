@@ -4,6 +4,8 @@ import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -27,6 +29,8 @@ public class User {
 	public static final int PHONE_FIELD_LENGTH = 20;
 	public static final String ADMINISTRATOR_FIELD = "admusr";
 	
+	@Id
+	@GeneratedValue
 	@Column(name = IDENTIFIER_FIELD, nullable = false, columnDefinition = DBTypeConstants.INTEGER)
 	private Integer identifier;
 	
@@ -55,7 +59,7 @@ public class User {
 	@Size(max = PHONE_FIELD_LENGTH, message = "La taille du téléphone doit être au maximum de {max}")
 	private String phone;
 	
-	@Column(name = ADMINISTRATOR_FIELD, nullable = false, columnDefinition = DBTypeConstants.VARCHAR)
+	@Column(name = ADMINISTRATOR_FIELD, nullable = false, columnDefinition = DBTypeConstants.BOOLEAN)
 	@NotNull(message = "La zone 'Administrateur' doit être renseignée")
 	private Boolean administrator;
 	
