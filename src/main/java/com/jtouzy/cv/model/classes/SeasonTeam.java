@@ -1,5 +1,7 @@
 package com.jtouzy.cv.model.classes;
 
+import javax.validation.constraints.NotNull;
+
 import com.jtouzy.dao.annotations.DAOTable;
 import com.jtouzy.dao.annotations.DAOTableField;
 import com.jtouzy.dao.annotations.DAOTableRelation;
@@ -8,14 +10,16 @@ import com.jtouzy.dao.db.DBType;
 @DAOTable(tableName = "eqs")
 public class SeasonTeam {
 	@DAOTableRelation(
-		column = @DAOTableField(id = true, name = "eqieqs", required = true, type = DBType.INTEGER),
+		column = @DAOTableField(id = true, name = "eqieqs", type = DBType.INTEGER),
 		relationColumn = "numeqi"
 	)
+	@NotNull(message = "L'équipe doit être renseignée")
 	private Team team;
 	@DAOTableRelation(
-		column = @DAOTableField(id = true, name = "saieqs", required = true, type = DBType.INTEGER),
+		column = @DAOTableField(id = true, name = "saieqs", type = DBType.INTEGER),
 		relationColumn = "numsai"
 	)
+	@NotNull(message = "La saison doit être renseignée")
 	private Season season;
 	
 	public Team getTeam() {

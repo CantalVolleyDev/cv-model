@@ -1,5 +1,7 @@
 package com.jtouzy.cv.model.classes;
 
+import javax.validation.constraints.NotNull;
+
 import com.jtouzy.dao.annotations.DAOTable;
 import com.jtouzy.dao.annotations.DAOTableField;
 import com.jtouzy.dao.annotations.DAOTableRelation;
@@ -8,19 +10,22 @@ import com.jtouzy.dao.db.DBType;
 @DAOTable(tableName = "pma")
 public class MatchPlayer {
 	@DAOTableRelation(
-		column = @DAOTableField(id = true, name = "matpma", required = true, type = DBType.INTEGER),
+		column = @DAOTableField(id = true, name = "matpma", type = DBType.INTEGER),
 		relationColumn = "nummat"
 	)
+	@NotNull(message = "Le match doit être renseigné")
 	private Match match;
 	@DAOTableRelation(
-		column = @DAOTableField(id = true, name = "eqipma", required = true, type = DBType.INTEGER),
+		column = @DAOTableField(id = true, name = "eqipma", type = DBType.INTEGER),
 		relationColumn = "numeqi"
 	)
+	@NotNull(message = "L'équipe doit être renseignée")
 	private Team team;
 	@DAOTableRelation(
-		column = @DAOTableField(id = true, name = "usrpma", required = true, type = DBType.INTEGER),
+		column = @DAOTableField(id = true, name = "usrpma", type = DBType.INTEGER),
 		relationColumn = "numusr"
 	)
+	@NotNull(message = "Le joueur doit être renseigné")
 	private User player;
 	
 	public Match getMatch() {
