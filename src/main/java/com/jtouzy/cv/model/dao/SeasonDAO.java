@@ -3,7 +3,6 @@ package com.jtouzy.cv.model.dao;
 import com.jtouzy.cv.model.classes.Season;
 import com.jtouzy.dao.errors.DAOException;
 import com.jtouzy.dao.errors.QueryException;
-import com.jtouzy.dao.errors.StatementBuildException;
 import com.jtouzy.dao.errors.model.TableContextNotFoundException;
 import com.jtouzy.dao.impl.AbstractSingleIdentifierDAO;
 import com.jtouzy.dao.query.Query;
@@ -14,6 +13,13 @@ import com.jtouzy.dao.query.Query;
  */
 public class SeasonDAO extends AbstractSingleIdentifierDAO<Season> {
 	/**
+	 * Saison courante en cache<br>
+	 * Cette saison courante est modifiée uniquement lorsqu'on change, donc une fois par an pendant l'été<br>
+	 * Lors de l'utilisation de la méthode {@link #getCurrentSeason()}, elle sera recherchée uniquement la première fois<br>
+	 */
+	private Season currentSeasonCached;
+	
+	/**
 	 * Constructeur du DAO 
 	 * @param daoClass Classe modèle gérée par le DAO (Season)
 	 * @throws DAOException Si la validation technique du DAO est incorrecte
@@ -23,14 +29,30 @@ public class SeasonDAO extends AbstractSingleIdentifierDAO<Season> {
 		super(daoClass);
 	}
 	
+	/**
+	 * Modification de la saison courante en base
+	 * @param newCurrent Instance de la nouvelle saison courante
+	 */
+	public void updateCurrentSeason(Season newCurrent) {
+		// TODO penser à modifier ici en plus du cache
+		this.currentSeasonCached = newCurrent;
+	}
+	
+	/**
+	 * Recherche de l'instance de la saison courante
+	 * @return Objet instance représentant la saison courante
+	 * @throws QueryException si problème lors de l'exécution de la requête pour la saison courante
+	 */
 	public Season getCurrentSeason()
 	throws QueryException {
 		try {
-			Query<Season> query = Query.build(this.connection, this.daoClass)
-			                           .equalsClause(Season.CURRENT_FIELD, true);
-			query.printSql();
-			return query.one();
-		} catch (TableContextNotFoundException | StatementBuildException ex) {
+			if (currentSeasonCached == null) {
+				Query<Season> query = Query.build(this.connection, this.daoClass)
+                                           .equalsClause(Season.CURRENT_FIELD, true);
+				currentSeasonCached = query.one();
+			}
+			return currentSeasonCached;
+		} catch (TableContextNotFoundException ex) {
 			throw new QueryException(ex);
 		}
 	}
