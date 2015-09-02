@@ -4,11 +4,11 @@
 
   <groupId>com.jtouzy</groupId>
   <artifactId>cv-model</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.1</version>
   <packaging>jar</packaging>
 
   <name>cv-model</name>
-  <url>http://maven.apache.org</url>
+  <url>http://github.com/CantalVolleyDev/cv-model</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -75,4 +75,5 @@
   		</dependency>
   	</dependencies>
   </dependencyManagement>
+  <description>Module générique pour les classes modèle de cv-api</description>
 </project>
