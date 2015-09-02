@@ -1,6 +1,7 @@
 package com.jtouzy.cv.model.dao;
 
 import com.jtouzy.cv.model.classes.Season;
+import com.jtouzy.dao.errors.DAOCrudException;
 import com.jtouzy.dao.errors.DAOException;
 import com.jtouzy.dao.errors.QueryException;
 import com.jtouzy.dao.errors.model.TableContextNotFoundException;
@@ -32,10 +33,20 @@ public class SeasonDAO extends AbstractSingleIdentifierDAO<Season> {
 	/**
 	 * Modification de la saison courante en base
 	 * @param newCurrent Instance de la nouvelle saison courante
+	 * @throws QueryException si problème lors de l'exécution de la requête pour la saison courante
+	 * @throws DAOCrudException si problème lors de la mise à jour en base de données
 	 */
-	public void updateCurrentSeason(Season newCurrent) {
-		// TODO penser à modifier ici en plus du cache
-		this.currentSeasonCached = newCurrent;
+	public void updateCurrentSeason(Season newCurrent)
+	throws QueryException, DAOCrudException {
+		Season currentSeason = getCurrentSeason();
+		if (currentSeason != null) {
+			// TODO penser à contrôler si les championnats sont terminés, ou confirmation pour clotûrer
+			currentSeason.setCurrent(false);
+			update(currentSeason);
+		}
+		newCurrent.setCurrent(true);
+		createOrUpdate(newCurrent);
+		currentSeasonCached = newCurrent;
 	}
 	
 	/**
