@@ -58,8 +58,8 @@ public class SeasonDAO extends AbstractSingleIdentifierDAO<Season> {
 	throws QueryException {
 		try {
 			if (currentSeasonCached == null) {
-				Query<Season> query = Query.build(this.connection, this.daoClass)
-                                           .equalsClause(Season.CURRENT_FIELD, true);
+				Query<Season> query = Query.build(this.connection, this.daoClass);
+				query.context().addEqualsCriterion(Season.CURRENT_FIELD, true);
 				currentSeasonCached = query.one();
 			}
 			return currentSeasonCached;

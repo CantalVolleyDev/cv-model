@@ -8,6 +8,7 @@ import com.jtouzy.dao.errors.DAOException;
 import com.jtouzy.dao.errors.QueryException;
 import com.jtouzy.dao.errors.model.TableContextNotFoundException;
 import com.jtouzy.dao.impl.AbstractSingleIdentifierDAO;
+import com.jtouzy.dao.query.Query;
 
 public class NewsDAO extends AbstractSingleIdentifierDAO<News> {
 	public NewsDAO(Class<News> daoClass)
@@ -18,8 +19,9 @@ public class NewsDAO extends AbstractSingleIdentifierDAO<News> {
 	@Override
 	public List<News> queryAll() throws QueryException {
 		try {
-			return query().directJoin(User.class)
-					      .many();
+			Query<News> query = query();
+			query.context().addDirectJoin(User.class);
+			return query.many();
 		} catch (TableContextNotFoundException ex) {
 			throw new QueryException(ex);
 		}
