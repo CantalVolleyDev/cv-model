@@ -1,7 +1,5 @@
 package com.jtouzy.cv.model.dao;
 
-import java.util.List;
-
 import com.jtouzy.cv.model.classes.News;
 import com.jtouzy.cv.model.classes.User;
 import com.jtouzy.dao.errors.DAOException;
@@ -17,11 +15,11 @@ public class NewsDAO extends AbstractSingleIdentifierDAO<News> {
 	}
 	
 	@Override
-	public List<News> queryAll() throws QueryException {
+	public Query<News> query() throws QueryException {
 		try {
-			Query<News> query = query();
+			Query<News> query = super.query();
 			query.context().addDirectJoin(User.class);
-			return query.many();
+			return query;
 		} catch (TableContextNotFoundException ex) {
 			throw new QueryException(ex);
 		}
