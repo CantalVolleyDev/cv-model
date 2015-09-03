@@ -1,5 +1,6 @@
 package com.jtouzy.cv.model.dao;
 
+import com.jtouzy.cv.model.cache.ApplicationCache;
 import com.jtouzy.cv.model.classes.Season;
 import com.jtouzy.dao.errors.DAOCrudException;
 import com.jtouzy.dao.errors.DAOException;
@@ -13,13 +14,6 @@ import com.jtouzy.dao.query.Query;
  * @author jtouzy
  */
 public class SeasonDAO extends AbstractSingleIdentifierDAO<Season> {
-	/**
-	 * Saison courante en cache<br>
-	 * Cette saison courante est modifiée uniquement lorsqu'on change, donc une fois par an pendant l'été<br>
-	 * Lors de l'utilisation de la méthode {@link #getCurrentSeason()}, elle sera recherchée uniquement la première fois<br>
-	 */
-	private Season currentSeasonCached;
-	
 	/**
 	 * Constructeur du DAO 
 	 * @param daoClass Classe modèle gérée par le DAO (Season)
@@ -46,7 +40,7 @@ public class SeasonDAO extends AbstractSingleIdentifierDAO<Season> {
 		}
 		newCurrent.setCurrent(true);
 		createOrUpdate(newCurrent);
-		currentSeasonCached = newCurrent;
+		ApplicationCache.setCurrentSeason(newCurrent);
 	}
 	
 	/**
@@ -57,12 +51,14 @@ public class SeasonDAO extends AbstractSingleIdentifierDAO<Season> {
 	public Season getCurrentSeason()
 	throws QueryException {
 		try {
-			if (currentSeasonCached == null) {
+			Season cached = ApplicationCache.getCurrentSeason();
+			if (cached == null) {
 				Query<Season> query = Query.build(this.connection, this.daoClass);
 				query.context().addEqualsCriterion(Season.CURRENT_FIELD, true);
-				currentSeasonCached = query.one();
+				cached = query.one();
+				ApplicationCache.setCurrentSeason(cached);
 			}
-			return currentSeasonCached;
+			return cached;
 		} catch (TableContextNotFoundException ex) {
 			throw new QueryException(ex);
 		}
