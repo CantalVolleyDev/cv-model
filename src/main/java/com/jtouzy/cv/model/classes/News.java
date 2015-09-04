@@ -25,6 +25,7 @@ public class News {
 	public final static String CREATION_DATE_FIELD = "dcrnws";
 	public final static String PUBLISH_DATE_FIELD = "dpunws";
 	public final static String STATE_FIELD = "stanws";
+	public final static String CATEGORY_FIELD = "catnws";
 	
 	@Id
 	@GeneratedValue
@@ -58,6 +59,10 @@ public class News {
 	@Column(name = STATE_FIELD, length = 1, nullable = false, columnDefinition = DBTypeConstants.ENUM)
 	@NotNull(message = "L'état doit être renseigné")
 	private News.State state;
+	
+	@Column(name = CATEGORY_FIELD, length = 40, nullable = false, columnDefinition = DBTypeConstants.VARCHAR)
+	@NotNull(message = "La catégorie doit être renseignée")
+	private String category;
 	
 	public Integer getIdentifier() {
 		return identifier;
@@ -100,6 +105,12 @@ public class News {
 	}
 	public void setState(News.State state) {
 		this.state = state;
+	}
+	public String getCategory() {
+		return category;
+	}
+	public void setCategory(String category) {
+		this.category = category;
 	}
 
 	public enum State {
