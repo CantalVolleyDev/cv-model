@@ -11,8 +11,9 @@ import javax.validation.constraints.Size;
 import com.jtouzy.dao.db.DBTypeConstants;
 
 @Entity
-@Table(name = "sai")
+@Table(name = Season.TABLE)
 public class Season {
+	public static final String TABLE = "sai";
 	public static final String IDENTIFIER_FIELD = "numsai";
 	public static final String START_YEAR_FIELD = "prdsai";
 	public static final int START_YEAR_FIELD_LENGTH = 4;

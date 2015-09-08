@@ -13,8 +13,9 @@ import javax.validation.constraints.NotNull;
 import com.jtouzy.dao.db.DBTypeConstants;
 
 @Entity
-@Table(name = "mat")
+@Table(name = Match.TABLE)
 public class Match {
+	public static final String TABLE = "mat";
 	public static final String IDENTIFIER_FIELD = "nummat";
 	public static final String CHAMPIONSHIP_FIELD = "chpmat";
 	public static final String STEP_FIELD = "etpmat";

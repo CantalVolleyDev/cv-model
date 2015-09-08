@@ -14,8 +14,9 @@ import javax.validation.constraints.Size;
 import com.jtouzy.dao.db.DBTypeConstants;
 
 @Entity
-@Table(name = "cmt")
+@Table(name = Comment.TABLE)
 public class Comment {
+	public static final String TABLE = "cmt";
 	public static final String IDENTIFIER_FIELD = "numcmt";
 	public static final String ENTITY_FIELD = "entcmt";
 	public static final int ENTITY_FIELD_LENGTH = 3;

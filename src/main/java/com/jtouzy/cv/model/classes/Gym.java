@@ -11,8 +11,9 @@ import javax.validation.constraints.Size;
 import com.jtouzy.dao.db.DBTypeConstants;
 
 @Entity
-@Table(name = "gym")
+@Table(name = Gym.TABLE)
 public class Gym {
+	public static final String TABLE = "gym";
 	public static final String IDENTIFIER_FIELD = "idegym";
 	public static final String LABEL_FIELD = "libgym";
 	public static final int LABEL_FIELD_LENGTH = 40;

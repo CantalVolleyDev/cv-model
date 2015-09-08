@@ -9,8 +9,9 @@ import javax.validation.constraints.NotNull;
 import com.jtouzy.dao.db.DBTypeConstants;
 
 @Entity
-@Table(name = "pma")
+@Table(name = MatchPlayer.TABLE)
 public class MatchPlayer {
+	public static final String TABLE = "pma";
 	public static final String MATCH_FIELD = "matpma";
 	public static final String TEAM_FIELD = "eqipma";
 	public static final String USER_FIELD = "usrpma";

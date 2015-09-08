@@ -7,8 +7,9 @@ import javax.validation.constraints.NotNull;
 
 import com.jtouzy.dao.db.DBTypeConstants;
 
-@Table(name = "eqs")
+@Table(name = SeasonTeam.TABLE)
 public class SeasonTeam {
+	public static final String TABLE = "eqs";
 	public static final String TEAM_FIELD = "eqieqs";
 	public static final String SEASON_FIELD = "saieqs";
 	

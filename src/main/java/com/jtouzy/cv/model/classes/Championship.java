@@ -12,8 +12,9 @@ import javax.validation.constraints.Size;
 import com.jtouzy.dao.db.DBTypeConstants;
 
 @Entity
-@Table(name = "chp")
+@Table(name = Championship.TABLE)
 public class Championship {
+	public static final String TABLE = "chp";
 	public static final String IDENTIFIER_FIELD = "numchp";
 	public static final String COMPETITION_FIELD = "cmpchp";
 	public static final String LABEL_FIELD = "libchp";

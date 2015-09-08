@@ -13,8 +13,9 @@ import javax.validation.constraints.Size;
 import com.jtouzy.dao.db.DBTypeConstants;
 
 @Entity
-@Table(name = "usr")
+@Table(name = User.TABLE)
 public class User {
+	public static final String TABLE = "usr";
 	public static final String IDENTIFIER_FIELD = "numusr";
 	public static final String MAIL_FIELD = "maiusr";
 	public static final int MAIL_FIELD_LENGTH = 100;

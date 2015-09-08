@@ -1,12 +1,14 @@
 package com.jtouzy.cv.model.classes;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -14,8 +16,9 @@ import javax.validation.constraints.Size;
 import com.jtouzy.dao.db.DBTypeConstants;
 
 @Entity
-@Table(name = "cmp")
+@Table(name = Competition.TABLE)
 public class Competition {
+	public static final String TABLE = "cmp";
 	public static final String IDENTIFIER_FIELD = "numcmp";
 	public static final String SEASON_FIELD = "saicmp";
 	public static final String CVT_FIELD = "cvtcmp";
@@ -83,6 +86,9 @@ public class Competition {
 	
 	@Column(name = GROUP_FIELD, columnDefinition = DBTypeConstants.INTEGER)
 	private Integer groupNumber;
+	
+	@OneToMany
+	private List<Championship> championships;
 	
 	public Integer getIdentifier() {
 		return identifier;
@@ -155,6 +161,12 @@ public class Competition {
 	}
 	public void setGroupNumber(Integer groupNumber) {
 		this.groupNumber = groupNumber;
+	}
+	public List<Championship> getChampionships() {
+		return championships;
+	}
+	public void setChampionships(List<Championship> championships) {
+		this.championships = championships;
 	}
 	
 	@Override
