@@ -1,10 +1,13 @@
 package com.jtouzy.cv.model.classes;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -59,6 +62,11 @@ public class Championship {
 	@NotNull(message = "L'état doit être renseigné")
 	private Championship.State state;
 	
+	@OneToMany
+	private List<ChampionshipTeam> teams;
+	@OneToMany
+	private List<ChampionshipWeeks> weeks;
+	
 	public Integer getIdentifier() {
 		return identifier;
 	}
@@ -101,7 +109,20 @@ public class Championship {
 	public void setState(Championship.State state) {
 		this.state = state;
 	}
-
+	
+	public List<ChampionshipTeam> getTeams() {
+		return teams;
+	}
+	public void setTeams(List<ChampionshipTeam> teams) {
+		this.teams = teams;
+	}
+	public List<ChampionshipWeeks> getWeeks() {
+		return weeks;
+	}
+	public void setWeeks(List<ChampionshipWeeks> weeks) {
+		this.weeks = weeks;
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
