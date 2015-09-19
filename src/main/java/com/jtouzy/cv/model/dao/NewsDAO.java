@@ -4,6 +4,7 @@ import com.jtouzy.cv.model.classes.News;
 import com.jtouzy.cv.model.classes.User;
 import com.jtouzy.dao.errors.DAOException;
 import com.jtouzy.dao.errors.QueryException;
+import com.jtouzy.dao.errors.model.ColumnContextNotFoundException;
 import com.jtouzy.dao.errors.model.TableContextNotFoundException;
 import com.jtouzy.dao.impl.AbstractSingleIdentifierDAO;
 import com.jtouzy.dao.query.Query;
@@ -20,7 +21,7 @@ public class NewsDAO extends AbstractSingleIdentifierDAO<News> {
 			Query<News> query = super.query();
 			query.context().addDirectJoin(User.class);
 			return query;
-		} catch (TableContextNotFoundException ex) {
+		} catch (TableContextNotFoundException | ColumnContextNotFoundException ex) {
 			throw new QueryException(ex);
 		}
 	}

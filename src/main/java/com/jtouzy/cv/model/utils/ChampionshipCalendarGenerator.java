@@ -99,7 +99,7 @@ public class ChampionshipCalendarGenerator {
 			}
 			this.teams = this.championship.getTeams();
 			this.season = this.championship.getCompetition().getSeason();
-		} catch (DAOInstantiationException | QueryException | TableContextNotFoundException ex) {
+		} catch (DAOInstantiationException | QueryException | TableContextNotFoundException | ColumnContextNotFoundException ex) {
 			throw new CalendarGenerationException(ex);
 		}
 	}
