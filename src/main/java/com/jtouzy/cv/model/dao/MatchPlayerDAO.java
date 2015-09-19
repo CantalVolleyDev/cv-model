@@ -5,8 +5,8 @@ import com.jtouzy.dao.errors.DAOException;
 import com.jtouzy.dao.impl.AbstractDAO;
 
 public class MatchPlayerDAO extends AbstractDAO<MatchPlayer> {
-	public MatchPlayerDAO(Class<MatchPlayer> daoClass)
+	public MatchPlayerDAO()
 	throws DAOException {
-		super(daoClass);
+		super(MatchPlayer.class);
 	}
 }

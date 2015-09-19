@@ -9,9 +9,9 @@ import com.jtouzy.dao.impl.AbstractSingleIdentifierDAO;
 import com.jtouzy.dao.query.Query;
 
 public class NewsDAO extends AbstractSingleIdentifierDAO<News> {
-	public NewsDAO(Class<News> daoClass)
+	public NewsDAO()
 	throws DAOException {
-		super(daoClass);
+		super(News.class);
 	}
 	
 	@Override

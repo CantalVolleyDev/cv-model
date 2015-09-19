@@ -5,8 +5,8 @@ import com.jtouzy.dao.errors.DAOException;
 import com.jtouzy.dao.impl.AbstractSingleIdentifierDAO;
 
 public class CommentDAO extends AbstractSingleIdentifierDAO<Comment> {
-	public CommentDAO(Class<Comment> daoClass)
+	public CommentDAO()
 	throws DAOException {
-		super(daoClass);
+		super(Comment.class);
 	}
 }

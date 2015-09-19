@@ -16,12 +16,11 @@ import com.jtouzy.dao.query.Query;
 public class SeasonDAO extends AbstractSingleIdentifierDAO<Season> {
 	/**
 	 * Constructeur du DAO 
-	 * @param daoClass Classe modèle gérée par le DAO (Season)
 	 * @throws DAOException Si la validation technique du DAO est incorrecte
 	 */
-	public SeasonDAO(Class<Season> daoClass)
+	public SeasonDAO()
 	throws DAOException {
-		super(daoClass);
+		super(Season.class);
 	}
 	
 	/**

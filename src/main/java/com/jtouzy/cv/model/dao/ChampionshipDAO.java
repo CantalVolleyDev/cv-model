@@ -11,9 +11,9 @@ import com.jtouzy.dao.impl.AbstractSingleIdentifierDAO;
 import com.jtouzy.dao.query.CUD;
 
 public class ChampionshipDAO extends AbstractSingleIdentifierDAO<Championship> {
-	public ChampionshipDAO(Class<Championship> daoClass)
+	public ChampionshipDAO()
 	throws DAOException {
-		super(daoClass);
+		super(Championship.class);
 	}
 	
 	public void calculateRankings(Integer championshipId)

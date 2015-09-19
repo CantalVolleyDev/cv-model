@@ -9,9 +9,9 @@ import com.jtouzy.dao.impl.AbstractSingleIdentifierDAO;
 import com.jtouzy.dao.query.Query;
 
 public class UserDAO extends AbstractSingleIdentifierDAO<User> {
-	public UserDAO(Class<User> daoClass)
+	public UserDAO()
 	throws DAOException {
-		super(daoClass);
+		super(User.class);
 	}
 	
 	public User findByMail(String mail)

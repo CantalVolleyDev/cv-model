@@ -5,8 +5,8 @@ import com.jtouzy.dao.errors.DAOException;
 import com.jtouzy.dao.impl.AbstractSingleIdentifierDAO;
 
 public class CompetitionDAO extends AbstractSingleIdentifierDAO<Competition> {
-	public CompetitionDAO(Class<Competition> daoClass)
+	public CompetitionDAO()
 	throws DAOException {
-		super(daoClass);
+		super(Competition.class);
 	}
 }

@@ -5,8 +5,8 @@ import com.jtouzy.dao.errors.DAOException;
 import com.jtouzy.dao.impl.AbstractDAO;
 
 public class ChampionshipWeeksDAO extends AbstractDAO<ChampionshipWeeks> {
-	public ChampionshipWeeksDAO(Class<ChampionshipWeeks> daoClass)
+	public ChampionshipWeeksDAO()
 	throws DAOException {
-		super(daoClass);
+		super(ChampionshipWeeks.class);
 	}
 }
