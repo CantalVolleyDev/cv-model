@@ -51,7 +51,8 @@ public class MatchDAO extends AbstractSingleIdentifierDAO<Match> {
 			}
 			query.context()
 			     .addDirectJoin(Team.class, "eq1", Match.FIRST_TEAM_FIELD)
-			     .addDirectJoin(Team.class, "eq2", Match.SECOND_TEAM_FIELD);
+			     .addDirectJoin(Team.class, "eq2", Match.SECOND_TEAM_FIELD)
+			     .orderBy(Match.DATE_FIELD, false);
 			return query.many();
 		} catch (TableContextNotFoundException | ColumnContextNotFoundException ex) {
 			throw new QueryException(ex);
