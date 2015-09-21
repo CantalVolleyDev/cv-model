@@ -66,6 +66,8 @@ public class Championship {
 	private List<ChampionshipTeam> teams;
 	@OneToMany
 	private List<ChampionshipWeeks> weeks;
+	@OneToMany
+	private List<Match> matchs;
 	
 	public Integer getIdentifier() {
 		return identifier;
@@ -121,6 +123,12 @@ public class Championship {
 	}
 	public void setWeeks(List<ChampionshipWeeks> weeks) {
 		this.weeks = weeks;
+	}
+	public List<Match> getMatchs() {
+		return matchs;
+	}
+	public void setMatchs(List<Match> matchs) {
+		this.matchs = matchs;
 	}
 	
 	@Override
