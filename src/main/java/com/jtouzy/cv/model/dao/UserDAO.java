@@ -18,15 +18,15 @@ public class UserDAO extends AbstractSingleIdentifierDAO<User> {
 	throws UserNotFoundException {
 		try {
 			if (Strings.isNullOrEmpty(mail))
-				throw new UserNotFoundException();
+				throw new UserNotFoundException(new IllegalStateException("L'adresse e-mail est obligatoire"));
 			Query<User> q = query();
 			q.context().addEqualsCriterion(User.MAIL_FIELD, mail);
 			User user = q.one();
 			if (user == null)
-				throw new UserNotFoundException();
+				throw new UserNotFoundException(mail);
 			return user;
 		} catch (QueryException ex) {
-			throw new UserNotFoundException();
+			throw new UserNotFoundException(ex);
 		}
 	}
 }
