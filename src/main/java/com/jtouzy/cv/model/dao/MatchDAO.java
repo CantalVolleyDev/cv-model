@@ -8,22 +8,71 @@ import com.jtouzy.cv.model.classes.Competition;
 import com.jtouzy.cv.model.classes.Match;
 import com.jtouzy.cv.model.classes.SeasonTeamPlayer;
 import com.jtouzy.cv.model.classes.Team;
+import com.jtouzy.cv.model.errors.MatchNotFoundException;
 import com.jtouzy.cv.model.validators.MatchValidator;
 import com.jtouzy.dao.builders.model.OrContext;
 import com.jtouzy.dao.errors.DAOException;
 import com.jtouzy.dao.errors.QueryException;
 import com.jtouzy.dao.errors.model.ColumnContextNotFoundException;
+import com.jtouzy.dao.errors.model.ContextMissingException;
 import com.jtouzy.dao.errors.model.TableContextNotFoundException;
 import com.jtouzy.dao.impl.AbstractSingleIdentifierDAO;
 import com.jtouzy.dao.model.ModelContext;
 import com.jtouzy.dao.query.Query;
 
 public class MatchDAO extends AbstractSingleIdentifierDAO<Match> {
+	/**
+	 * Constructeur
+	 * @throws DAOException Si la définition du DAO est incorrecte
+	 */
 	public MatchDAO()
 	throws DAOException {
 		super(Match.class, new MatchValidator());
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 * Redéfinition de la méthode pour toujours avoir une jointure 
+	 * avec les équipes à chaque fois qu'on utilise cette fonction
+	 */
+	@Override
+	public Query<Match> query() 
+	throws QueryException {
+		try {
+			Query<Match> query = super.query();
+			query.context()
+		         .addDirectJoin(Team.class, "eq1", Match.FIRST_TEAM_FIELD)
+		         .addDirectJoin(Team.class, "eq2", Match.SECOND_TEAM_FIELD);
+			return query;
+		} catch (ContextMissingException ex) {
+			throw new QueryException(ex);
+		}
+	}
+	
+	/**
+	 * Recherche des informations d'un seul match
+	 * @param id Identifiant unique du match
+	 * @return Match correspondant à l'index
+	 * @throws MatchNotFoundException Si le match n'as pas été trouvé
+	 * @throws QueryException Si problème dans l'exécution de la requête
+	 */
+	public Match queryOne(Integer id)
+	throws MatchNotFoundException, QueryException {
+		Match match = super.queryForOne(id);
+		if (match == null) {
+			throw new MatchNotFoundException(id);
+		}
+		return match;
+	}
+	
+	/**
+	 * Récupération d'une liste de matchs en fonction d'un numéro de saison
+	 * ou un utilisateur en particulier (ou combinaison)
+	 * @param seasonId Numéro de saison, si NULL, pas de critère
+	 * @param userId Numéro d'utilisateur, si NULL, pas de critère
+	 * @return Liste de matchs correspondants aux critères
+	 * @throws QueryException Si problème dans l'exécution de la requête
+	 */
 	public List<Match> getMatchs(Integer seasonId, Integer userId)
 	throws QueryException {
 		try {
@@ -49,10 +98,7 @@ public class MatchDAO extends AbstractSingleIdentifierDAO<Match> {
 				orContext.addInCriterion(Match.SECOND_TEAM_FIELD, teamIds);
 				query.context().addOrCriterion(orContext);
 			}
-			query.context()
-			     .addDirectJoin(Team.class, "eq1", Match.FIRST_TEAM_FIELD)
-			     .addDirectJoin(Team.class, "eq2", Match.SECOND_TEAM_FIELD)
-			     .orderBy(Match.DATE_FIELD, false);
+			query.context().orderBy(Match.DATE_FIELD, false);
 			return query.many();
 		} catch (TableContextNotFoundException | ColumnContextNotFoundException ex) {
 			throw new QueryException(ex);
