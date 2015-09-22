@@ -34,10 +34,9 @@ public class MatchPlayer {
 	
 	@Id
 	@JoinColumn(
-		name = USER_FIELD, nullable = false, columnDefinition = DBTypeConstants.INTEGER,
+		name = USER_FIELD, columnDefinition = DBTypeConstants.INTEGER,
 		referencedColumnName = User.IDENTIFIER_FIELD
 	)
-	@NotNull(message = "Le joueur doit être renseigné")
 	private User player;
 	
 	public Match getMatch() {
