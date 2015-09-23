@@ -17,7 +17,7 @@ public class TeamDAO extends AbstractSingleIdentifierDAO<Team> {
 	public List<Team> getTeamsByName(String name)
 	throws QueryException {
 		Query<Team> query = query();
-		query.context().addEqualsCriterion("lower(" + Team.LABEL_FIELD + ")", name);
+		query.context().addEqualsCriterion(Team.LABEL_FIELD, name);
 		return query.many();
 	}
 }
