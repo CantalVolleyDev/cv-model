@@ -1,5 +1,7 @@
 package com.jtouzy.cv.model.dao;
 
+import java.util.List;
+
 import com.google.common.base.Strings;
 import com.jtouzy.cv.model.classes.User;
 import com.jtouzy.cv.model.errors.UserNotFoundException;
@@ -28,5 +30,16 @@ public class UserDAO extends AbstractSingleIdentifierDAO<User> {
 		} catch (QueryException ex) {
 			throw new UserNotFoundException(ex);
 		}
+	}
+	
+	public List<User> findByNames(String name, String firstName)
+	throws QueryException {
+		if (Strings.isNullOrEmpty(name) || Strings.isNullOrEmpty(firstName)) {
+			throw new QueryException(new IllegalArgumentException("Le nom et le prénom doivent être renseignés pour la requête"));
+		}
+		Query<User> q = query();
+		q.context().addEqualsCriterion(User.NAME_FIELD, name);
+		q.context().addEqualsCriterion(User.FIRST_NAME_FIELD, firstName);
+		return q.many();
 	}
 }
