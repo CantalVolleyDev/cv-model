@@ -6,6 +6,7 @@ import com.jtouzy.dao.errors.DAOCrudException;
 import com.jtouzy.dao.errors.DAOException;
 import com.jtouzy.dao.errors.QueryException;
 import com.jtouzy.dao.errors.model.TableContextNotFoundException;
+import com.jtouzy.dao.errors.validation.DataValidationException;
 import com.jtouzy.dao.impl.AbstractSingleIdentifierDAO;
 import com.jtouzy.dao.query.Query;
 
@@ -30,7 +31,7 @@ public class SeasonDAO extends AbstractSingleIdentifierDAO<Season> {
 	 * @throws DAOCrudException si problème lors de la mise à jour en base de données
 	 */
 	public void updateCurrentSeason(Season newCurrent)
-	throws QueryException, DAOCrudException {
+	throws QueryException, DAOCrudException, DataValidationException {
 		Season currentSeason = getCurrentSeason();
 		if (currentSeason != null) {
 			// TODO penser à contrôler si les championnats sont terminés, ou confirmation pour clotûrer
