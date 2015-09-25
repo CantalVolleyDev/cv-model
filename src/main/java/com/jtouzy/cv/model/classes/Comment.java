@@ -22,6 +22,7 @@ public class Comment {
 	public static final int ENTITY_FIELD_LENGTH = 3;
 	public static final String ENTITY_VALUE_FIELD = "valcmt";
 	public static final String USER_FIELD = "usrcmt";
+	public static final String TEAM_FIELD = "eqicmt";
 	public static final String DATE_FIELD = "datcmt";
 	public static final String TEXT_FIELD = "txtcmt";
 	public static final int TEXT_FIELD_LENGTH = 4000;
@@ -45,6 +46,12 @@ public class Comment {
 	)
 	@NotNull(message = "L'utilisateur doit être renseigné")
 	private User user;
+
+	@JoinColumn(
+		name = TEAM_FIELD, columnDefinition = DBTypeConstants.INTEGER,
+		referencedColumnName = Team.IDENTIFIER_FIELD
+	)
+	private Team team;
 	
 	@Column(name = DATE_FIELD, nullable = false, columnDefinition = DBTypeConstants.DATETIME)
 	@NotNull(message = "La date doit être renseignée")
@@ -91,7 +98,13 @@ public class Comment {
 	public void setContent(String content) {
 		this.content = content;
 	}
-
+	public Team getTeam() {
+		return team;
+	}
+	public void setTeam(Team team) {
+		this.team = team;
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
