@@ -109,4 +109,23 @@ public class MatchDAO extends AbstractSingleIdentifierDAO<Match> {
 			throw new QueryException(ex);
 		}
 	}
+	
+	public List<Match> getChampionshipMatchs(Integer championshipId)
+	throws QueryException {
+		return getChampionshipMatchsQuery(championshipId).many();
+	}
+	
+	public List<Match> getChampionshipValidateMatchs(Integer championshipId)
+	throws QueryException {
+		Query<Match> query = getChampionshipMatchsQuery(championshipId);
+		query.context().addEqualsCriterion(Match.STATE_FIELD, Match.State.V);
+		return query.many();
+	}
+	
+	private Query<Match> getChampionshipMatchsQuery(Integer championshipId)
+	throws QueryException {
+		Query<Match> query = query();
+		query.context().addEqualsCriterion(Match.CHAMPIONSHIP_FIELD, championshipId);
+		return query;
+	}
 }
