@@ -20,12 +20,31 @@ import com.jtouzy.dao.errors.QueryException;
 import com.jtouzy.dao.errors.model.ContextMissingException;
 import com.jtouzy.dao.errors.validation.DataValidationException;
 import com.jtouzy.dao.impl.AbstractSingleIdentifierDAO;
+import com.jtouzy.dao.model.ModelContext;
 import com.jtouzy.dao.query.CUD;
+import com.jtouzy.dao.query.QueryCollection;
 
 public class ChampionshipDAO extends AbstractSingleIdentifierDAO<Championship> {
 	public ChampionshipDAO()
 	throws DAOException {
 		super(Championship.class);
+	}
+	
+	public Championship getChampionshipTeamsAndMatchs(Integer championshipId)
+	throws QueryException {
+		try {
+			QueryCollection<Championship,ChampionshipTeam> teamsQuery = queryCollection(ChampionshipTeam.class);
+			teamsQuery.context().addDirectJoin(ModelContext.getTableContext(Team.class), ChampionshipTeam.TABLE)
+			                    .addEqualsCriterion(Championship.class, Championship.IDENTIFIER_FIELD, championshipId);
+			teamsQuery.context().orderBy(ChampionshipTeam.POINTS_FIELD, false);
+			Championship championship = teamsQuery.fillOne();
+			if (championship == null)
+				return null;
+			championship.setMatchs(DAOManager.getDAO(this.connection, MatchDAO.class).getChampionshipMatchs(championshipId));
+			return championship;
+		} catch (ContextMissingException | DAOInstantiationException ex) {
+			throw new QueryException(ex);
+		}
 	}
 	
 	public void calculateRankings(Integer championshipId)
