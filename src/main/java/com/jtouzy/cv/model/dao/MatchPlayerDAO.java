@@ -3,6 +3,7 @@ package com.jtouzy.cv.model.dao;
 import java.util.List;
 
 import com.jtouzy.cv.model.classes.MatchPlayer;
+import com.jtouzy.cv.model.classes.User;
 import com.jtouzy.dao.errors.DAOCrudException;
 import com.jtouzy.dao.errors.DAOException;
 import com.jtouzy.dao.errors.QueryException;
@@ -19,11 +20,16 @@ public class MatchPlayerDAO extends AbstractDAO<MatchPlayer> {
 	
 	public List<MatchPlayer> getPlayers(Integer matchId)
 	throws QueryException {
-		Query<MatchPlayer> query = query();
-		if (matchId != null) {
-			query.context().addEqualsCriterion(MatchPlayer.MATCH_FIELD, matchId);
+		try {
+			Query<MatchPlayer> query = query();
+			if (matchId != null) {
+				query.context().addDirectJoin(User.class)
+				               .addEqualsCriterion(MatchPlayer.MATCH_FIELD, matchId);
+			}
+			return query.many();
+		} catch (ContextMissingException ex) {
+			throw new QueryException(ex);
 		}
-		return query.many();
 	}
 	
 	public void delete(Integer matchId, Integer teamId)
