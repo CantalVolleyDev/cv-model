@@ -185,7 +185,7 @@ public class ChampionshipDAO extends AbstractSingleIdentifierDAO<Championship> {
 		winnerTeam.setSetsAgainst(winnerTeam.getSetsAgainst() + looserScore);
 		winnerTeam.setPointsFor(winnerTeam.getPointsFor() + winnerPoints);
 		winnerTeam.setPointsAgainst(winnerTeam.getPointsAgainst() + looserPoints);
-		looserTeam.setPlay(winnerTeam.getPlay() + 1);
+		looserTeam.setPlay(looserTeam.getPlay() + 1);
 		looserTeam.setSetsFor(looserTeam.getSetsFor() + looserScore);
 		looserTeam.setSetsAgainst(looserTeam.getSetsAgainst() + winnerScore);
 		looserTeam.setPointsFor(looserTeam.getPointsFor() + looserPoints);
