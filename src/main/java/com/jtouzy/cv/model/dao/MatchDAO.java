@@ -12,76 +12,35 @@ import com.jtouzy.cv.model.validators.MatchValidator;
 import com.jtouzy.dao.builders.model.OrContext;
 import com.jtouzy.dao.errors.DAOException;
 import com.jtouzy.dao.errors.QueryException;
-import com.jtouzy.dao.errors.model.ColumnContextNotFoundException;
 import com.jtouzy.dao.errors.model.ContextMissingException;
-import com.jtouzy.dao.errors.model.TableContextNotFoundException;
 import com.jtouzy.dao.impl.AbstractSingleIdentifierDAO;
 import com.jtouzy.dao.model.ModelContext;
 import com.jtouzy.dao.query.Query;
 
 public class MatchDAO extends AbstractSingleIdentifierDAO<Match> {
-	/**
-	 * Constructeur
-	 * @throws DAOException Si la définition du DAO est incorrecte
-	 */
 	public MatchDAO()
 	throws DAOException {
 		super(Match.class, new MatchValidator());
 	}
-	
-	/**
-	 * {@inheritDoc}
-	 * Redéfinition de la méthode pour toujours avoir une jointure 
-	 * avec les équipes à chaque fois qu'on utilise cette fonction
-	 */
-	@Override
-	public Query<Match> query() 
+
+	public Match getOneWithDetails(Integer matchId) 
 	throws QueryException {
 		try {
-			Query<Match> query = super.query();
-			query.context()
-		         .addDirectJoin(Team.class, "eq1", Match.FIRST_TEAM_FIELD)
-		         .addDirectJoin(Team.class, "eq2", Match.SECOND_TEAM_FIELD);
-			return query;
-		} catch (ContextMissingException ex) {
-			throw new QueryException(ex);
-		}
-	}
-	
-	/**
-	 * Recherche des informations d'un seul match avec détails
-	 * (Championnat + Compétition)
-	 * @param id Identifiant unique du match
-	 * @return Match correspondant à l'index
-	 * @throws MatchNotFoundException Si le match n'as pas été trouvé
-	 * @throws QueryException Si problème dans l'exécution de la requête
-	 */
-	public Match queryOneWithDetails(Integer id) 
-	throws QueryException {
-		try {
-			Query<Match> query = query();
+			Query<Match> query = queryWithTeamDetails();
 			query.context()
 			     .addDirectJoin(Championship.class)
 			     .addDirectJoin(ModelContext.getTableContext(Competition.class), Championship.TABLE)
-			     .addEqualsCriterion(Match.IDENTIFIER_FIELD, id);
+			     .addEqualsCriterion(Match.IDENTIFIER_FIELD, matchId);
 			return query.one();
 		} catch (ContextMissingException ex) {
 			throw new QueryException(ex);
 		}
 	}
 	
-	/**
-	 * Récupération d'une liste de matchs en fonction d'un numéro de saison
-	 * ou un utilisateur en particulier (ou combinaison)
-	 * @param seasonId Numéro de saison, si NULL, pas de critère
-	 * @param userId Numéro d'utilisateur, si NULL, pas de critère
-	 * @return Liste de matchs correspondants aux critères
-	 * @throws QueryException Si problème dans l'exécution de la requête
-	 */
-	public List<Match> getMatchs(Integer seasonId, Integer userId)
+	public List<Match> getAllBySeasonAndUser(Integer seasonId, Integer userId)
 	throws QueryException {
 		try {
-			Query<Match> query = query();
+			Query<Match> query = queryWithTeamDetails();
 			if (seasonId != null) {
 				query.context()
 				     .addDirectJoin(Championship.class)
@@ -105,27 +64,40 @@ public class MatchDAO extends AbstractSingleIdentifierDAO<Match> {
 			}
 			query.context().orderBy(Match.DATE_FIELD, false);
 			return query.many();
-		} catch (TableContextNotFoundException | ColumnContextNotFoundException ex) {
+		} catch (ContextMissingException ex) {
 			throw new QueryException(ex);
 		}
 	}
 	
-	public List<Match> getChampionshipMatchs(Integer championshipId)
+	public List<Match> getAllByChampionship(Integer championshipId)
 	throws QueryException {
-		return getChampionshipMatchsQuery(championshipId).many();
+		return queryByChampionship(championshipId).many();
 	}
 	
-	public List<Match> getChampionshipValidateMatchs(Integer championshipId)
+	public List<Match> getAllValidateByChampionship(Integer championshipId)
 	throws QueryException {
-		Query<Match> query = getChampionshipMatchsQuery(championshipId);
+		Query<Match> query = queryByChampionship(championshipId);
 		query.context().addEqualsCriterion(Match.STATE_FIELD, Match.State.V);
 		return query.many();
 	}
 	
-	private Query<Match> getChampionshipMatchsQuery(Integer championshipId)
+	private Query<Match> queryByChampionship(Integer championshipId)
 	throws QueryException {
-		Query<Match> query = query();
+		Query<Match> query = queryWithTeamDetails();
 		query.context().addEqualsCriterion(Match.CHAMPIONSHIP_FIELD, championshipId);
 		return query;
+	}
+	
+	private Query<Match> queryWithTeamDetails()
+	throws QueryException {
+		try {
+			Query<Match> query = super.query();
+			query.context()
+		         .addDirectJoin(Team.class, "eq1", Match.FIRST_TEAM_FIELD)
+		         .addDirectJoin(Team.class, "eq2", Match.SECOND_TEAM_FIELD);
+			return query;
+		} catch (ContextMissingException ex) {
+			throw new QueryException(ex);
+		}
 	}
 }

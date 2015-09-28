@@ -15,25 +15,40 @@ public class ChampionshipTeamDAO extends AbstractDAO<ChampionshipTeam> {
 		super(ChampionshipTeam.class);
 	}
 	
-	public ChampionshipTeam getOneChampionshipTeam(Integer championshipId, Integer teamId)
+	/**
+	 * Récupération d'un seul enregistrement pour équipe d'un championnat
+	 * @param championshipId ID unique du championnat
+	 * @param teamId ID unique de l'équipe
+	 * @return Objet de représentation d'une équipe de championnat
+	 * @throws QueryException
+	 */
+	public ChampionshipTeam getOne(Integer championshipId, Integer teamId)
 	throws QueryException {
-		List<ChampionshipTeam> onlyOneTeam = getChampionshipTeams(championshipId, teamId);
+		List<ChampionshipTeam> onlyOneTeam = getAllByChampionshipIn(championshipId, Arrays.asList(teamId));
 		if (onlyOneTeam.size() == 0)
 			return null;
 		return onlyOneTeam.get(0);
 	}
 	
-	public List<ChampionshipTeam> getChampionshipTeams(Integer championshipId)
+	/**
+	 * Récupération de toutes les équipes d'un championnat
+	 * @param championshipId ID unique du championnat
+	 * @return Liste d'objets de représentation des équipes du championnat
+	 * @throws QueryException
+	 */
+	public List<ChampionshipTeam> getAllByChampionship(Integer championshipId)
 	throws QueryException {
-		return this.getChampionshipTeams(championshipId, (List<Integer>)null);
+		return this.getAllByChampionshipIn(championshipId, (List<Integer>)null);
 	}
 	
-	public List<ChampionshipTeam> getChampionshipTeams(Integer championshipId, Integer teamId)
-	throws QueryException {
-		return this.getChampionshipTeams(championshipId, Arrays.asList(teamId));
-	}
-	
-	public List<ChampionshipTeam> getChampionshipTeams(Integer championshipId, List<Integer> teamIds)
+	/**
+	 * Récupération d'une liste d'équipes provenant d'un championnat
+	 * @param championshipId ID unique du championnat
+	 * @param teamIds Liste d'ID uniques d'équipes
+	 * @return Liste d'objets de représentation des équipes du championnat correspondant aux IDs
+	 * @throws QueryException
+	 */
+	public List<ChampionshipTeam> getAllByChampionshipIn(Integer championshipId, List<Integer> teamIds)
 	throws QueryException {
 		Query<ChampionshipTeam> query = query();
 		if (championshipId != null) {

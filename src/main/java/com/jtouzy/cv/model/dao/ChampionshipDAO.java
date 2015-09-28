@@ -30,7 +30,26 @@ public class ChampionshipDAO extends AbstractSingleIdentifierDAO<Championship> {
 		super(Championship.class);
 	}
 	
-	public Championship getChampionshipTeamsAndMatchs(Integer championshipId)
+	/**
+	 * Recherche d'un championnat avec sa liste de matchs ainsi que les équipes
+	 * @param championshipId ID unique du championnat
+	 * @return Championnat avec liste d'équipes et liste de matchs renseigné, ou null si championnat inexistant
+	 * @throws QueryException
+	 */
+	public Championship getOneWithTeamsAndMatchs(Integer championshipId)
+	throws QueryException {
+		try {
+			Championship championship = getOneWithTeams(championshipId);
+			if (championship == null)
+				return null;
+			championship.setMatchs(DAOManager.getDAO(this.connection, MatchDAO.class).getAllByChampionship(championshipId));
+			return championship;
+		} catch (DAOInstantiationException ex) {
+			throw new QueryException(ex);
+		}
+	}
+	
+	public Championship getOneWithTeams(Integer championshipId)
 	throws QueryException {
 		try {
 			QueryCollection<Championship,ChampionshipTeam> teamsQuery = queryCollection(ChampionshipTeam.class);
@@ -38,11 +57,8 @@ public class ChampionshipDAO extends AbstractSingleIdentifierDAO<Championship> {
 			                    .addEqualsCriterion(Championship.class, Championship.IDENTIFIER_FIELD, championshipId);
 			teamsQuery.context().orderBy(ChampionshipTeam.POINTS_FIELD, false);
 			Championship championship = teamsQuery.fillOne();
-			if (championship == null)
-				return null;
-			championship.setMatchs(DAOManager.getDAO(this.connection, MatchDAO.class).getChampionshipMatchs(championshipId));
 			return championship;
-		} catch (ContextMissingException | DAOInstantiationException ex) {
+		} catch (ContextMissingException ex) {
 			throw new QueryException(ex);
 		}
 	}
@@ -50,7 +66,7 @@ public class ChampionshipDAO extends AbstractSingleIdentifierDAO<Championship> {
 	public void calculateRankings(Integer championshipId)
 	throws RankingsCalculateException, DataValidationException {
 		try {
-			Championship championship = queryForOne(championshipId);
+			Championship championship = getOne(championshipId);
 			if (championship == null)
 				throw new RankingsCalculateException("Le championnat " + championshipId + " n'existe pas");
 			if (championship.getType() != Type.CHP)
@@ -100,8 +116,8 @@ public class ChampionshipDAO extends AbstractSingleIdentifierDAO<Championship> {
 	throws RankingsCalculateException, DataValidationException {
 		try {
 			ChampionshipTeamDAO ctDao = DAOManager.getDAO(this.connection, ChampionshipTeamDAO.class);
-			List<ChampionshipTeam> teams = ctDao.getChampionshipTeams(championshipId);
-			List<Match> matchs = DAOManager.getDAO(this.connection, MatchDAO.class).getChampionshipValidateMatchs(championshipId);
+			List<ChampionshipTeam> teams = ctDao.getAllByChampionship(championshipId);
+			List<Match> matchs = DAOManager.getDAO(this.connection, MatchDAO.class).getAllValidateByChampionship(championshipId);
 			Iterator<Match> it = matchs.iterator();
 			Match match;
 			ChampionshipTeam team1, team2;
@@ -139,7 +155,7 @@ public class ChampionshipDAO extends AbstractSingleIdentifierDAO<Championship> {
 			ChampionshipTeamDAO ctDao = DAOManager.getDAO(this.connection, ChampionshipTeamDAO.class);
 			// Recherche des 2 équipes du championnat en un seul select pour optimisation
 			List<ChampionshipTeam> teams = 
-					ctDao.getChampionshipTeams(match.getChampionship().getIdentifier(),
+					ctDao.getAllByChampionshipIn(match.getChampionship().getIdentifier(),
 							Arrays.asList(match.getFirstTeam().getIdentifier(),
 									      match.getSecondTeam().getIdentifier())); 
 			// Ensuite, on retrouve celle de la première équipe et la seconde du match

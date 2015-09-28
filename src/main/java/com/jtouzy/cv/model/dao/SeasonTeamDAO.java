@@ -1,6 +1,5 @@
 package com.jtouzy.cv.model.dao;
 
-import com.google.common.collect.ImmutableMap;
 import com.jtouzy.cv.model.classes.Gym;
 import com.jtouzy.cv.model.classes.SeasonTeam;
 import com.jtouzy.cv.model.classes.Team;
@@ -16,8 +15,7 @@ public class SeasonTeamDAO extends AbstractDAO<SeasonTeam> {
 		super(SeasonTeam.class);
 	}
 	
-	@Override
-	public Query<SeasonTeam> query() 
+	private Query<SeasonTeam> queryWithDetails() 
 	throws QueryException {
 		try {
 			Query<SeasonTeam> query = super.query();
@@ -29,9 +27,11 @@ public class SeasonTeamDAO extends AbstractDAO<SeasonTeam> {
 		}
 	}
 	
-	public SeasonTeam getSeasonTeam(Integer seasonId, Integer teamId)
+	public SeasonTeam getOneWithDetails(Integer seasonId, Integer teamId)
 	throws QueryException {
-		return this.queryUnique(ImmutableMap.of(SeasonTeam.SEASON_FIELD, seasonId,
-				                                SeasonTeam.TEAM_FIELD, teamId));
+		Query<SeasonTeam> query = queryWithDetails();
+		query.context().addEqualsCriterion(SeasonTeam.SEASON_FIELD, seasonId);
+		query.context().addEqualsCriterion(SeasonTeam.TEAM_FIELD, teamId);
+		return query.one();
 	}
 }

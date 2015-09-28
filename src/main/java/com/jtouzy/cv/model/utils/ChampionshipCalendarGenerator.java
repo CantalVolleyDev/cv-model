@@ -9,21 +9,18 @@ import java.util.Optional;
 import com.jtouzy.cv.model.classes.Championship;
 import com.jtouzy.cv.model.classes.ChampionshipTeam;
 import com.jtouzy.cv.model.classes.ChampionshipWeeks;
-import com.jtouzy.cv.model.classes.Competition;
 import com.jtouzy.cv.model.classes.Match;
 import com.jtouzy.cv.model.classes.Season;
 import com.jtouzy.cv.model.classes.SeasonTeam;
 import com.jtouzy.cv.model.classes.Team;
 import com.jtouzy.cv.model.dao.ChampionshipDAO;
+import com.jtouzy.cv.model.dao.ChampionshipWeeksDAO;
 import com.jtouzy.cv.model.errors.CalendarGenerationException;
 import com.jtouzy.dao.DAOManager;
 import com.jtouzy.dao.errors.DAOInstantiationException;
 import com.jtouzy.dao.errors.QueryException;
-import com.jtouzy.dao.errors.model.ColumnContextNotFoundException;
 import com.jtouzy.dao.errors.model.TableContextNotFoundException;
-import com.jtouzy.dao.model.ModelContext;
 import com.jtouzy.dao.query.Query;
-import com.jtouzy.dao.query.QueryCollection;
 
 public class ChampionshipCalendarGenerator {
 	private Connection connection;
@@ -87,19 +84,14 @@ public class ChampionshipCalendarGenerator {
 	private void findChampionshipMainData()
 	throws CalendarGenerationException {
 		try {
-			ChampionshipDAO championshipDao = DAOManager.getDAO(this.connection, ChampionshipDAO.class);			
-			QueryCollection<Championship, ChampionshipTeam> chpQuery = championshipDao.queryCollection(ChampionshipTeam.class); 
-			chpQuery.context()
-			        .addDirectJoin(ModelContext.getTableContext(Team.class), ChampionshipTeam.TABLE)
-			        .addDirectJoin(ModelContext.getTableContext(Competition.class), Championship.TABLE)
-			        .addEqualsCriterion(Championship.class, Championship.IDENTIFIER_FIELD, championshipId);
-			this.championship = chpQuery.fillOne();
+			ChampionshipDAO championshipDao = DAOManager.getDAO(this.connection, ChampionshipDAO.class);
+			this.championship = championshipDao.getOneWithTeams(championshipId);
 			if (this.championship == null) {
 				throw new CalendarGenerationException("Championnat " + championshipId + " inexistant");
 			}
 			this.teams = this.championship.getTeams();
 			this.season = this.championship.getCompetition().getSeason();
-		} catch (DAOInstantiationException | QueryException | TableContextNotFoundException | ColumnContextNotFoundException ex) {
+		} catch (DAOInstantiationException | QueryException ex) {
 			throw new CalendarGenerationException(ex);
 		}
 	}
@@ -136,14 +128,9 @@ public class ChampionshipCalendarGenerator {
 	private void findChampionshipWeeks()
 	throws CalendarGenerationException {
 		try {
-			ChampionshipDAO championshipDao = DAOManager.getDAO(this.connection, ChampionshipDAO.class);	
-			QueryCollection<Championship, ChampionshipWeeks> weeksQuery = championshipDao.queryCollection(ChampionshipWeeks.class); 
-			weeksQuery.context()
-				      .orderBy(Championship.class, Championship.IDENTIFIER_FIELD)
-				      .orderBy(ChampionshipWeeks.class, ChampionshipWeeks.WEEK_DATE_FIELD)
-			          .addEqualsCriterion(Championship.class, Championship.IDENTIFIER_FIELD, championshipId);
-			this.weeks = weeksQuery.fillOne().getWeeks();
-		} catch (DAOInstantiationException | QueryException | TableContextNotFoundException | ColumnContextNotFoundException ex) {
+			ChampionshipWeeksDAO championshipDao = DAOManager.getDAO(this.connection, ChampionshipWeeksDAO.class);	
+			this.weeks = championshipDao.getAllByChampionship(championshipId);
+		} catch (DAOInstantiationException | QueryException ex) {
 			throw new CalendarGenerationException(ex);
 		} 
 	}

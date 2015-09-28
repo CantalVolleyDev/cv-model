@@ -18,7 +18,7 @@ public class MatchPlayerDAO extends AbstractDAO<MatchPlayer> {
 		super(MatchPlayer.class);
 	}
 	
-	public List<MatchPlayer> getPlayers(Integer matchId)
+	public List<MatchPlayer> getAllByMatch(Integer matchId)
 	throws QueryException {
 		try {
 			Query<MatchPlayer> query = query();

@@ -18,10 +18,16 @@ public class CommentDAO extends AbstractSingleIdentifierDAO<Comment> {
 		super(Comment.class);
 	}
 	
-	public List<Comment> getMatchComments(Integer matchId)
+	/**
+	 * Récupération de tous les commentaires pour un match donné
+	 * @param matchId ID unique du match
+	 * @return Liste d'objets représentant la liste des commentaires d'un match
+	 * @throws QueryException
+	 */
+	public List<Comment> getAllByMatch(Integer matchId)
 	throws QueryException {
 		try {
-			Query<Comment> query = getQueryMatchComment(matchId);
+			Query<Comment> query = queryMatchComment(matchId);
 			query.context().addDirectJoin(User.class);
 			query.context().orderBy(Comment.DATE_FIELD, true);
 			return query.many();
@@ -30,14 +36,28 @@ public class CommentDAO extends AbstractSingleIdentifierDAO<Comment> {
 		}
 	}
 	
-	public Comment getMatchTeamComment(Integer matchId, Integer teamId)
+	/**
+	 * Récupération d'un commentaire officiel d'équipe (un seul par équipe)
+	 * @param matchId ID unique du match
+	 * @param teamId ID unique de l'équipe
+	 * @return Objet représentant le commentaire officiel d'une équipe
+	 * @throws QueryException
+	 */
+	public Comment getOneByMatchTeam(Integer matchId, Integer teamId)
 	throws QueryException {
-		Query<Comment> query = getQueryMatchComment(matchId);
+		Query<Comment> query = queryMatchComment(matchId);
 		query.context().addEqualsCriterion(Comment.TEAM_FIELD, teamId);
 		return query.one();
 	}
 	
-	private Query<Comment> getQueryMatchComment(Integer matchId)
+	/**
+	 * Méthode utilitaire permettant de construire l'objet query() pour les
+	 * commentaires d'un match
+	 * @param matchId ID unique du match
+	 * @return Objet Query représentant le select pour les commentaires d'un match
+	 * @throws QueryException
+	 */
+	private Query<Comment> queryMatchComment(Integer matchId)
 	throws QueryException {
 		Query<Comment> query = query();
 		query.context().addEqualsCriterion(Comment.ENTITY_FIELD, Comment.Entity.MAT);

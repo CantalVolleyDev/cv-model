@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.google.common.base.Strings;
 import com.jtouzy.cv.model.classes.User;
-import com.jtouzy.cv.model.errors.UserNotFoundException;
 import com.jtouzy.dao.errors.DAOException;
 import com.jtouzy.dao.errors.QueryException;
 import com.jtouzy.dao.impl.AbstractSingleIdentifierDAO;
@@ -16,23 +15,16 @@ public class UserDAO extends AbstractSingleIdentifierDAO<User> {
 		super(User.class);
 	}
 	
-	public User findByMail(String mail)
-	throws UserNotFoundException {
-		try {
-			if (Strings.isNullOrEmpty(mail))
-				throw new UserNotFoundException(new IllegalStateException("L'adresse e-mail est obligatoire"));
-			Query<User> q = query();
-			q.context().addEqualsCriterion(User.MAIL_FIELD, mail);
-			User user = q.one();
-			if (user == null)
-				throw new UserNotFoundException(mail);
-			return user;
-		} catch (QueryException ex) {
-			throw new UserNotFoundException(ex);
-		}
+	public User getOneByMail(String mail)
+	throws QueryException {
+		if (Strings.isNullOrEmpty(mail))
+			throw new IllegalStateException("L'adresse e-mail est obligatoire");
+		Query<User> q = query();
+		q.context().addEqualsCriterion(User.MAIL_FIELD, mail);
+		return q.one();
 	}
 	
-	public List<User> findByNames(String name, String firstName)
+	public List<User> getAllByNames(String name, String firstName)
 	throws QueryException {
 		if (Strings.isNullOrEmpty(name) || Strings.isNullOrEmpty(firstName)) {
 			throw new QueryException(new IllegalArgumentException("Le nom et le prénom doivent être renseignés pour la requête"));
