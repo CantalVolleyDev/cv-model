@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.jtouzy.cv.model.classes.SeasonTeam;
 import com.jtouzy.cv.model.classes.SeasonTeamPlayer;
-import com.jtouzy.cv.model.classes.Team;
 import com.jtouzy.cv.model.classes.User;
 import com.jtouzy.dao.errors.DAOInstantiationException;
 import com.jtouzy.dao.errors.QueryException;
