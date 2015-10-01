@@ -1,5 +1,6 @@
 package com.jtouzy.cv.model.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,6 +58,8 @@ public class MatchDAO extends AbstractSingleIdentifierDAO<Match> {
 				List<Integer> teamIds = teamPlayers.stream()
 						                           .map(sp -> sp.getTeam().getIdentifier())
 						                           .collect(Collectors.toList());
+				if (teamIds.size() == 0)
+					return new ArrayList<Match>();
 				OrContext orContext = new OrContext(query.context());
 				orContext.addInCriterion(Match.FIRST_TEAM_FIELD, teamIds);
 				orContext.addInCriterion(Match.SECOND_TEAM_FIELD, teamIds);
