@@ -60,17 +60,17 @@ public class Match {
 	
 	@JoinColumn(
 		name = FIRST_TEAM_FIELD, nullable = false, columnDefinition = DBTypeConstants.INTEGER,
-		referencedColumnName = Team.IDENTIFIER_FIELD
+		referencedColumnName = SeasonTeam.IDENTIFIER_FIELD
 	)
 	@NotNull(message = "L'équipe à domicile doit être renseignée")
-	private Team firstTeam;
+	private SeasonTeam firstTeam;
 	
 	@JoinColumn(
 		name = SECOND_TEAM_FIELD, nullable = false, columnDefinition = DBTypeConstants.INTEGER,
-		referencedColumnName = Team.IDENTIFIER_FIELD
+		referencedColumnName = SeasonTeam.IDENTIFIER_FIELD
 	)
 	@NotNull(message = "L'équipe à l'extérieur doit être renseignée")
-	private Team secondTeam;
+	private SeasonTeam secondTeam;
 	
 	@Column(name = DATE_FIELD, nullable = false, columnDefinition = DBTypeConstants.DATETIME)
 	@NotNull(message = "La date doit être renseignée")
@@ -82,9 +82,9 @@ public class Match {
 	
 	@JoinColumn(
 		name = SCORE_SETTER_FIELD, columnDefinition = DBTypeConstants.INTEGER,
-		referencedColumnName = Team.IDENTIFIER_FIELD
+		referencedColumnName = SeasonTeam.IDENTIFIER_FIELD
 	)
-	private Team scoreSettingTeam;
+	private SeasonTeam scoreSettingTeam;
 	
 	@Column(name = FORFEIT_FIELD, nullable = false, columnDefinition = DBTypeConstants.BOOLEAN)
 	@NotNull(message = "La zone 'Forfait' doit être renseignée")
@@ -139,16 +139,16 @@ public class Match {
 	public void setOrder(Integer order) {
 		this.order = order;
 	}
-	public Team getFirstTeam() {
+	public SeasonTeam getFirstTeam() {
 		return firstTeam;
 	}
-	public void setFirstTeam(Team firstTeam) {
+	public void setFirstTeam(SeasonTeam firstTeam) {
 		this.firstTeam = firstTeam;
 	}
-	public Team getSecondTeam() {
+	public SeasonTeam getSecondTeam() {
 		return secondTeam;
 	}
-	public void setSecondTeam(Team secondTeam) {
+	public void setSecondTeam(SeasonTeam secondTeam) {
 		this.secondTeam = secondTeam;
 	}
 	public LocalDateTime getDate() {
@@ -163,10 +163,10 @@ public class Match {
 	public void setState(Match.State state) {
 		this.state = state;
 	}
-	public Team getScoreSettingTeam() {
+	public SeasonTeam getScoreSettingTeam() {
 		return scoreSettingTeam;
 	}
-	public void setScoreSettingTeam(Team scoreSettingTeam) {
+	public void setScoreSettingTeam(SeasonTeam scoreSettingTeam) {
 		this.scoreSettingTeam = scoreSettingTeam;
 	}
 	public Boolean isForfeit() {

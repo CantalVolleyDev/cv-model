@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 
 import com.jtouzy.cv.model.classes.Championship;
 import com.jtouzy.cv.model.classes.ChampionshipTeam;
@@ -12,7 +11,6 @@ import com.jtouzy.cv.model.classes.ChampionshipWeeks;
 import com.jtouzy.cv.model.classes.Match;
 import com.jtouzy.cv.model.classes.Season;
 import com.jtouzy.cv.model.classes.SeasonTeam;
-import com.jtouzy.cv.model.classes.Team;
 import com.jtouzy.cv.model.dao.ChampionshipDAO;
 import com.jtouzy.cv.model.dao.ChampionshipWeeksDAO;
 import com.jtouzy.cv.model.errors.CalendarGenerationException;
@@ -105,7 +103,7 @@ public class ChampionshipCalendarGenerator {
 		if (teamCount%2 != 0) {
 			Championship chp = new Championship();
 			chp.setIdentifier(this.championshipId);
-			Team exempt = new Team();
+			SeasonTeam exempt = new SeasonTeam();
 			exempt.setLabel("Exempt");
 			ChampionshipTeam ctExempt = new ChampionshipTeam();
 			ctExempt.setChampionship(chp);
@@ -168,7 +166,7 @@ public class ChampionshipCalendarGenerator {
 					match.setFirstTeam(team1.getTeam());
 					match.setSecondTeam(team2.getTeam());
 					match.setStep(j);
-					seasonTeam = getSeasonTeam(match.getFirstTeam());
+					seasonTeam = match.getFirstTeam();
 					match.setDate(weeks.get(j-1) 
 							           .getWeekDate()
 							           .plusDays(seasonTeam.getDate().getDayOfWeek().getValue() - 1)
@@ -233,16 +231,4 @@ public class ChampionshipCalendarGenerator {
 		if (this.seasonTeams.size() == 0)
 			throw new CalendarGenerationException("Aucune équipe enregistrée pour la saison");
 	}
-	
-	private SeasonTeam getSeasonTeam(Team team)
-	throws CalendarGenerationException {
-		Optional<SeasonTeam> opt = seasonTeams.stream()
-				                              .filter(st -> st.getTeam().getIdentifier() == team.getIdentifier())
-				                              .findFirst();
-		if (!opt.isPresent())
-			throw new CalendarGenerationException("Equipe " + team.getLabel() + " non enregistré pour la saison");
-		return opt.get();
-	}
-	
-	
 }

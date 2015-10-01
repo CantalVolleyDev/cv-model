@@ -14,8 +14,7 @@ import com.jtouzy.dao.db.DBTypeConstants;
 public class SeasonTeamPlayer {
 	public static final String TABLE = "esj";
 	public static final String PLAYER_FIELD = "jouesj";
-	public static final String SEASON_FIELD = "saiesj";
-	public static final String TEAM_FIELD = "eqiesj";
+	public static final String SEASON_TEAM_FIELD = "eqiesj";
 	public static final String MANAGER_FIELD = "resesj";
 	
 	@Id
@@ -27,19 +26,11 @@ public class SeasonTeamPlayer {
 	
 	@Id
 	@JoinColumn(
-		name = TEAM_FIELD, nullable = false, columnDefinition = DBTypeConstants.INTEGER,
-		referencedColumnName = Team.IDENTIFIER_FIELD
+		name = SEASON_TEAM_FIELD, nullable = false, columnDefinition = DBTypeConstants.INTEGER,
+		referencedColumnName = SeasonTeam.IDENTIFIER_FIELD
 	)
 	@NotNull(message = "L'équipe doit être renseignée")
-	private Team team;
-	
-	@Id
-	@JoinColumn(
-		name = SEASON_FIELD, nullable = false, columnDefinition = DBTypeConstants.INTEGER,
-		referencedColumnName = Season.IDENTIFIER_FIELD
-	)
-	@NotNull(message = "La saison doit être renseignée")
-	private Season season;
+	private SeasonTeam team;
 	
 	@Column(name = MANAGER_FIELD, nullable = false, columnDefinition = DBTypeConstants.BOOLEAN)
 	@NotNull(message = "La zone responsable doit être renseignée")
@@ -51,17 +42,11 @@ public class SeasonTeamPlayer {
 	public void setPlayer(User player) {
 		this.player = player;
 	}
-	public Team getTeam() {
+	public SeasonTeam getTeam() {
 		return team;
 	}
-	public void setTeam(Team team) {
+	public void setTeam(SeasonTeam team) {
 		this.team = team;
-	}
-	public Season getSeason() {
-		return season;
-	}
-	public void setSeason(Season season) {
-		this.season = season;
 	}
 	public Boolean getManager() {
 		return manager;

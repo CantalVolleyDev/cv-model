@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
@@ -16,9 +17,12 @@ import com.jtouzy.dao.db.DBTypeConstants;
 @Table(name = SeasonTeam.TABLE)
 public class SeasonTeam {
 	public static final String TABLE = "eqs";
+	public static final String IDENTIFIER_FIELD = "numeqs";
 	public static final String TEAM_FIELD = "eqieqs";
 	public static final String SEASON_FIELD = "saieqs";
 	public static final String GYM_FIELD = "gymeqs";
+	public static final String LABEL_FIELD = "libeqs";
+	public static final int LABEL_FIELD_LENGTH = 40;
 	public static final String STATE_FIELD = "etaeqs";
 	public static final int STATE_FIELD_LENGTH = 1;
 	public static final String DATE_FIELD = "dateqs";
@@ -26,6 +30,10 @@ public class SeasonTeam {
 	public static final int INFO_FIELD_LENGTH = 40;
 	
 	@Id
+	@GeneratedValue
+	@Column(name = IDENTIFIER_FIELD, nullable = false, columnDefinition = DBTypeConstants.INTEGER)
+	private Integer identifier;
+	
 	@JoinColumn(
 		name = TEAM_FIELD, nullable = false, columnDefinition = DBTypeConstants.INTEGER,
 		referencedColumnName = Team.IDENTIFIER_FIELD
@@ -47,6 +55,11 @@ public class SeasonTeam {
 	@NotNull(message = "Le gymnase doit être renseigné")
 	private Gym gym;
 	
+	@Column(name = LABEL_FIELD, nullable = false, length = LABEL_FIELD_LENGTH, columnDefinition = DBTypeConstants.VARCHAR)
+	@NotNull(message = "Le libellé doit être renseigné")
+	@Size(max = LABEL_FIELD_LENGTH, message = "La taille du libellé doit être au maximum de {max}")
+	private String label;
+	
 	@Column(name = STATE_FIELD, nullable = false, length = STATE_FIELD_LENGTH, columnDefinition = DBTypeConstants.ENUM)
 	@NotNull(message = "L'état doit être renseigné")
 	private SeasonTeam.State state;
@@ -59,6 +72,12 @@ public class SeasonTeam {
 	@Size(max = INFO_FIELD_LENGTH, message = "La taille de la zone d'informations doit être au maximum de {max}")
 	private String information;
 	
+	public Integer getIdentifier() {
+		return identifier;
+	}
+	public void setIdentifier(Integer identifier) {
+		this.identifier = identifier;
+	}
 	public Team getTeam() {
 		return team;
 	}
@@ -95,20 +114,32 @@ public class SeasonTeam {
 	public void setInformation(String information) {
 		this.information = information;
 	}
+	public String getLabel() {
+		return label;
+	}
+	public void setLabel(String label) {
+		this.label = label;
+	}
 	
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("SeasonTeam [team=");
+		builder.append("SeasonTeam [identifier=");
+		builder.append(identifier);
+		builder.append(", team=");
 		builder.append(team);
 		builder.append(", season=");
 		builder.append(season);
 		builder.append(", gym=");
 		builder.append(gym);
+		builder.append(", label=");
+		builder.append(label);
 		builder.append(", state=");
 		builder.append(state);
 		builder.append(", date=");
 		builder.append(date);
+		builder.append(", information=");
+		builder.append(information);
 		builder.append("]");
 		return builder.toString();
 	}

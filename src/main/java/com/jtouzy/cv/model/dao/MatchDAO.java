@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 import com.jtouzy.cv.model.classes.Championship;
 import com.jtouzy.cv.model.classes.Competition;
 import com.jtouzy.cv.model.classes.Match;
+import com.jtouzy.cv.model.classes.SeasonTeam;
 import com.jtouzy.cv.model.classes.SeasonTeamPlayer;
-import com.jtouzy.cv.model.classes.Team;
 import com.jtouzy.cv.model.validators.MatchValidator;
 import com.jtouzy.dao.builders.model.OrContext;
 import com.jtouzy.dao.errors.DAOException;
@@ -52,7 +52,8 @@ public class MatchDAO extends AbstractSingleIdentifierDAO<Match> {
 				Query<SeasonTeamPlayer> queryTeam = Query.build(this.connection, SeasonTeamPlayer.class);
 				queryTeam.context().addEqualsCriterion(SeasonTeamPlayer.PLAYER_FIELD, userId);
 				if (seasonId != null) {
-					queryTeam.context().addEqualsCriterion(SeasonTeamPlayer.SEASON_FIELD, seasonId);
+					queryTeam.context().addDirectJoin(SeasonTeam.class)
+									   .addEqualsCriterion(SeasonTeam.class, SeasonTeam.SEASON_FIELD, seasonId);
 				}
 				List<SeasonTeamPlayer> teamPlayers = queryTeam.many();
 				List<Integer> teamIds = teamPlayers.stream()
@@ -96,8 +97,8 @@ public class MatchDAO extends AbstractSingleIdentifierDAO<Match> {
 		try {
 			Query<Match> query = super.query();
 			query.context()
-		         .addDirectJoin(Team.class, "eq1", Match.FIRST_TEAM_FIELD)
-		         .addDirectJoin(Team.class, "eq2", Match.SECOND_TEAM_FIELD);
+		         .addDirectJoin(SeasonTeam.class, "eq1", Match.FIRST_TEAM_FIELD)
+		         .addDirectJoin(SeasonTeam.class, "eq2", Match.SECOND_TEAM_FIELD);
 			return query;
 		} catch (ContextMissingException ex) {
 			throw new QueryException(ex);

@@ -6,10 +6,10 @@ import com.jtouzy.cv.model.classes.Team;
 import com.jtouzy.dao.errors.DAOException;
 import com.jtouzy.dao.errors.QueryException;
 import com.jtouzy.dao.errors.model.ContextMissingException;
-import com.jtouzy.dao.impl.AbstractDAO;
+import com.jtouzy.dao.impl.AbstractSingleIdentifierDAO;
 import com.jtouzy.dao.query.Query;
 
-public class SeasonTeamDAO extends AbstractDAO<SeasonTeam> {
+public class SeasonTeamDAO extends AbstractSingleIdentifierDAO<SeasonTeam> {
 	public SeasonTeamDAO()
 	throws DAOException {
 		super(SeasonTeam.class);

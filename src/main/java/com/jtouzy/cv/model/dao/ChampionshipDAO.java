@@ -10,7 +10,7 @@ import com.jtouzy.cv.model.classes.Championship;
 import com.jtouzy.cv.model.classes.Championship.Type;
 import com.jtouzy.cv.model.classes.ChampionshipTeam;
 import com.jtouzy.cv.model.classes.Match;
-import com.jtouzy.cv.model.classes.Team;
+import com.jtouzy.cv.model.classes.SeasonTeam;
 import com.jtouzy.cv.model.errors.RankingsCalculateException;
 import com.jtouzy.dao.DAOManager;
 import com.jtouzy.dao.errors.DAOCrudException;
@@ -53,7 +53,7 @@ public class ChampionshipDAO extends AbstractSingleIdentifierDAO<Championship> {
 	throws QueryException {
 		try {
 			QueryCollection<Championship,ChampionshipTeam> teamsQuery = queryCollection(ChampionshipTeam.class);
-			teamsQuery.context().addDirectJoin(ModelContext.getTableContext(Team.class), ChampionshipTeam.TABLE)
+			teamsQuery.context().addDirectJoin(ModelContext.getTableContext(SeasonTeam.class), ChampionshipTeam.TABLE)
 			                    .addEqualsCriterion(Championship.class, Championship.IDENTIFIER_FIELD, championshipId);
 			teamsQuery.context().orderBy(ChampionshipTeam.POINTS_FIELD, false);
 			Championship championship = teamsQuery.fillOne();
@@ -137,7 +137,7 @@ public class ChampionshipDAO extends AbstractSingleIdentifierDAO<Championship> {
 		}
 	}
 	
-	private ChampionshipTeam getChampionshipTeam(List<ChampionshipTeam> list, Team team) {
+	private ChampionshipTeam getChampionshipTeam(List<ChampionshipTeam> list, SeasonTeam team) {
 		Optional<ChampionshipTeam> opt = list.stream()
 				                             .filter(ct -> ct.getTeam().getIdentifier() == team.getIdentifier())
 				                             .findFirst();

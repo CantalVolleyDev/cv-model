@@ -13,7 +13,7 @@ import com.jtouzy.dao.db.DBTypeConstants;
 @Table(name = ChampionshipTeam.TABLE)
 public class ChampionshipTeam {
 	public static final String TABLE = "ech";
-	public static final String TEAM_FIELD = "eqiech";
+	public static final String SEASON_TEAM_FIELD = "eqiech";
 	public static final String CHAMPIONSHIP_FIELD = "chpech";
 	public static final String POINTS_FIELD = "ptsech";
 	public static final String BONUS_FIELD = "bnsech";
@@ -36,11 +36,11 @@ public class ChampionshipTeam {
 	private Championship championship;
 	@Id
 	@JoinColumn(
-		name = TEAM_FIELD, nullable = false, columnDefinition = DBTypeConstants.INTEGER,
-		referencedColumnName = Team.IDENTIFIER_FIELD
+		name = SEASON_TEAM_FIELD, nullable = false, columnDefinition = DBTypeConstants.INTEGER,
+		referencedColumnName = SeasonTeam.IDENTIFIER_FIELD
 	)
 	@NotNull(message = "L'équipe doit être renseignée")
-	private Team team;
+	private SeasonTeam team;
 	@Column(name = POINTS_FIELD, nullable = false, columnDefinition = DBTypeConstants.INTEGER)
 	@NotNull(message = "Le nombre de points doit être renseigné")
 	private Integer points;
@@ -81,10 +81,10 @@ public class ChampionshipTeam {
 	public void setChampionship(Championship championship) {
 		this.championship = championship;
 	}
-	public Team getTeam() {
+	public SeasonTeam getTeam() {
 		return team;
 	}
-	public void setTeam(Team team) {
+	public void setTeam(SeasonTeam team) {
 		this.team = team;
 	}
 	public Integer getPoints() {

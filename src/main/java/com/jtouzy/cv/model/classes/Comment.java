@@ -49,9 +49,9 @@ public class Comment {
 
 	@JoinColumn(
 		name = TEAM_FIELD, columnDefinition = DBTypeConstants.INTEGER,
-		referencedColumnName = Team.IDENTIFIER_FIELD
+		referencedColumnName = SeasonTeam.IDENTIFIER_FIELD
 	)
-	private Team team;
+	private SeasonTeam team;
 	
 	@Column(name = DATE_FIELD, nullable = false, columnDefinition = DBTypeConstants.DATETIME)
 	@NotNull(message = "La date doit être renseignée")
@@ -98,10 +98,10 @@ public class Comment {
 	public void setContent(String content) {
 		this.content = content;
 	}
-	public Team getTeam() {
+	public SeasonTeam getTeam() {
 		return team;
 	}
-	public void setTeam(Team team) {
+	public void setTeam(SeasonTeam team) {
 		this.team = team;
 	}
 	
