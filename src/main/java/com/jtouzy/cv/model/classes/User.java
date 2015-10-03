@@ -29,6 +29,10 @@ public class User {
 	public static final String PHONE_FIELD = "telusr";
 	public static final int PHONE_FIELD_LENGTH = 20;
 	public static final String ADMINISTRATOR_FIELD = "admusr";
+	public static final String IMAGE_FIELD = "imgusr";
+	public static final int IMAGE_FIELD_LENGTH = 5;
+	public static final String GENDER_FIELD = "genusr";
+	public static final int GENDER_FIELD_LENGTH = 1;
 	
 	@Id
 	@GeneratedValue
@@ -63,6 +67,14 @@ public class User {
 	@Column(name = ADMINISTRATOR_FIELD, nullable = false, columnDefinition = DBTypeConstants.BOOLEAN)
 	@NotNull(message = "La zone 'Administrateur' doit être renseignée")
 	private Boolean administrator;
+	
+	@Column(name = IMAGE_FIELD, length = IMAGE_FIELD_LENGTH, columnDefinition = DBTypeConstants.VARCHAR)
+	@Size(max = IMAGE_FIELD_LENGTH, message = "La taille de l'extension de l'image doit être au maximum de {max}")
+	private String image;
+	
+	@Column(name = GENDER_FIELD, length = GENDER_FIELD_LENGTH, nullable = false, columnDefinition = DBTypeConstants.ENUM)
+	@NotNull(message = "Le genre doit être renseigné")
+	private User.Gender gender;
 	
 	public Integer getIdentifier() {
 		return identifier;
@@ -112,6 +124,18 @@ public class User {
 	public void setAdministrator(Boolean administrator) {
 		this.administrator = administrator;
 	}
+	public String getImage() {
+		return image;
+	}
+	public void setImage(String image) {
+		this.image = image;
+	}
+	public User.Gender getGender() {
+		return gender;
+	}
+	public void setGender(User.Gender gender) {
+		this.gender = gender;
+	}
 	
 	@Override
 	public String toString() {
@@ -132,7 +156,15 @@ public class User {
 		builder.append(phone);
 		builder.append(", administrator=");
 		builder.append(administrator);
+		builder.append(", image=");
+		builder.append(image);
+		builder.append(", gender=");
+		builder.append(gender);
 		builder.append("]");
 		return builder.toString();
+	}
+	
+	public enum Gender {
+		M, F 
 	}
 }

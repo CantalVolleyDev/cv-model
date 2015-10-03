@@ -28,6 +28,8 @@ public class SeasonTeam {
 	public static final String DATE_FIELD = "dateqs";
 	public static final String INFO_FIELD = "infeqs";
 	public static final int INFO_FIELD_LENGTH = 40;
+	public static final String IMAGE_FIELD = "imgeqs";
+	public static final int IMAGE_FIELD_LENGTH = 5;
 	
 	@Id
 	@GeneratedValue
@@ -71,6 +73,10 @@ public class SeasonTeam {
 	@Column(name = INFO_FIELD, length = INFO_FIELD_LENGTH, columnDefinition = DBTypeConstants.VARCHAR)
 	@Size(max = INFO_FIELD_LENGTH, message = "La taille de la zone d'informations doit être au maximum de {max}")
 	private String information;
+	
+	@Column(name = IMAGE_FIELD, length = IMAGE_FIELD_LENGTH, columnDefinition = DBTypeConstants.VARCHAR)
+	@Size(max = IMAGE_FIELD_LENGTH, message = "La taille de l'extension de l'image doit être au maximum de {max}")
+	private String image;
 	
 	public Integer getIdentifier() {
 		return identifier;
@@ -120,6 +126,12 @@ public class SeasonTeam {
 	public void setLabel(String label) {
 		this.label = label;
 	}
+	public String getImage() {
+		return image;
+	}
+	public void setImage(String image) {
+		this.image = image;
+	}
 	
 	@Override
 	public String toString() {
@@ -140,6 +152,8 @@ public class SeasonTeam {
 		builder.append(date);
 		builder.append(", information=");
 		builder.append(information);
+		builder.append(", image=");
+		builder.append(image);
 		builder.append("]");
 		return builder.toString();
 	}
