@@ -13,12 +13,11 @@ import com.jtouzy.cv.model.classes.Season;
 import com.jtouzy.cv.model.classes.SeasonTeam;
 import com.jtouzy.cv.model.dao.ChampionshipDAO;
 import com.jtouzy.cv.model.dao.ChampionshipWeeksDAO;
+import com.jtouzy.cv.model.dao.SeasonTeamDAO;
 import com.jtouzy.cv.model.errors.CalendarGenerationException;
 import com.jtouzy.dao.DAOManager;
 import com.jtouzy.dao.errors.DAOInstantiationException;
 import com.jtouzy.dao.errors.QueryException;
-import com.jtouzy.dao.errors.model.TableContextNotFoundException;
-import com.jtouzy.dao.query.Query;
 
 public class ChampionshipCalendarGenerator {
 	private Connection connection;
@@ -89,6 +88,7 @@ public class ChampionshipCalendarGenerator {
 			}
 			this.teams = this.championship.getTeams();
 			this.season = this.championship.getCompetition().getSeason();
+			this.season = championshipDao.getOneWithDetails(championshipId).getCompetition().getSeason();
 		} catch (DAOInstantiationException | QueryException ex) {
 			throw new CalendarGenerationException(ex);
 		}
@@ -218,10 +218,8 @@ public class ChampionshipCalendarGenerator {
 	private void findSeasonTeams()
 	throws CalendarGenerationException {
 		try {
-			Query<SeasonTeam> qst = Query.build(this.connection, SeasonTeam.class);
-			qst.context().addEqualsCriterion(SeasonTeam.SEASON_FIELD, season.getIdentifier());
-			this.seasonTeams = qst.many();
-		} catch (TableContextNotFoundException | QueryException ex) {
+			this.seasonTeams = DAOManager.getDAO(this.connection, SeasonTeamDAO.class).getAllBySeason(season.getIdentifier());
+		} catch (DAOInstantiationException | QueryException ex) {
 			throw new CalendarGenerationException(ex);
 		}
 	}

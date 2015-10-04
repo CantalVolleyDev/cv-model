@@ -18,6 +18,15 @@ public class SeasonTeamPlayerDAO extends AbstractDAO<SeasonTeamPlayer> {
 		super(SeasonTeamPlayer.class);
 	}
 	
+	public List<SeasonTeamPlayer> getAllBySeasonTeam(Integer seasonTeamId)
+	throws QueryException {
+		Query<SeasonTeamPlayer> query = queryWithDetails();
+		query.context().addEqualsCriterion(SeasonTeamPlayer.SEASON_TEAM_FIELD, seasonTeamId);
+		return query.many();
+	}
+	
+	// FIXME: Attention dessous il faudra le changer!
+	
 	public List<SeasonTeamPlayer> getAllBySeasonAndPlayer(Integer seasonId, Integer playerId)
 	throws QueryException {
 		try {

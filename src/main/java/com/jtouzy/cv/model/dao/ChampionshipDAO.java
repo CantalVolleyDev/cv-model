@@ -9,6 +9,8 @@ import java.util.Optional;
 import com.jtouzy.cv.model.classes.Championship;
 import com.jtouzy.cv.model.classes.Championship.Type;
 import com.jtouzy.cv.model.classes.ChampionshipTeam;
+import com.jtouzy.cv.model.classes.Competition;
+import com.jtouzy.cv.model.classes.Gym;
 import com.jtouzy.cv.model.classes.Match;
 import com.jtouzy.cv.model.classes.SeasonTeam;
 import com.jtouzy.cv.model.errors.RankingsCalculateException;
@@ -22,6 +24,7 @@ import com.jtouzy.dao.errors.validation.DataValidationException;
 import com.jtouzy.dao.impl.AbstractSingleIdentifierDAO;
 import com.jtouzy.dao.model.ModelContext;
 import com.jtouzy.dao.query.CUD;
+import com.jtouzy.dao.query.Query;
 import com.jtouzy.dao.query.QueryCollection;
 
 public class ChampionshipDAO extends AbstractSingleIdentifierDAO<Championship> {
@@ -54,12 +57,24 @@ public class ChampionshipDAO extends AbstractSingleIdentifierDAO<Championship> {
 		try {
 			QueryCollection<Championship,ChampionshipTeam> teamsQuery = queryCollection(ChampionshipTeam.class);
 			teamsQuery.context().addDirectJoin(ModelContext.getTableContext(SeasonTeam.class), ChampionshipTeam.TABLE)
+			                    .addDirectJoin(ModelContext.getTableContext(Gym.class), SeasonTeam.TABLE)
 			                    .addEqualsCriterion(Championship.class, Championship.IDENTIFIER_FIELD, championshipId);
 			teamsQuery.context().orderBy(ChampionshipTeam.POINTS_FIELD, false);
 			Championship championship = teamsQuery.fillOne();
 			return championship;
 		} catch (ContextMissingException ex) {
 			throw new QueryException(ex);
+		}
+	}
+	
+	public Championship getOneWithDetails(Integer championshipId)
+	throws QueryException {
+		try {
+			Query<Championship> query = query();
+			query.context().addDirectJoin(Competition.class);
+			return query.one();
+		} catch (ContextMissingException ex) {
+			throw new QueryException(ex); 
 		}
 	}
 	
