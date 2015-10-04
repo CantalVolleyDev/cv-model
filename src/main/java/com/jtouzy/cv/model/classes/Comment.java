@@ -125,6 +125,6 @@ public class Comment {
 	}
 
 	public enum Entity {
-		NWS, MAT
+		NWS, MAT, EQI
 	}
 }
