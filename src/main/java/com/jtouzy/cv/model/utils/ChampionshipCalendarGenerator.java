@@ -1,6 +1,7 @@
 package com.jtouzy.cv.model.utils;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -13,11 +14,14 @@ import com.jtouzy.cv.model.classes.Season;
 import com.jtouzy.cv.model.classes.SeasonTeam;
 import com.jtouzy.cv.model.dao.ChampionshipDAO;
 import com.jtouzy.cv.model.dao.ChampionshipWeeksDAO;
+import com.jtouzy.cv.model.dao.MatchDAO;
 import com.jtouzy.cv.model.dao.SeasonTeamDAO;
 import com.jtouzy.cv.model.errors.CalendarGenerationException;
 import com.jtouzy.dao.DAOManager;
+import com.jtouzy.dao.errors.DAOCrudException;
 import com.jtouzy.dao.errors.DAOInstantiationException;
 import com.jtouzy.dao.errors.QueryException;
+import com.jtouzy.dao.errors.validation.DataValidationException;
 
 public class ChampionshipCalendarGenerator {
 	private Connection connection;
@@ -32,6 +36,28 @@ public class ChampionshipCalendarGenerator {
 	private boolean returnMatchs;
 	private List<Match> matchs;
 	private List<SeasonTeam> seasonTeams;
+	
+	public static void generate(Connection connection, Integer championshipId, boolean returnMatchs)
+	throws CalendarGenerationException, DAOCrudException, DataValidationException, DAOInstantiationException {
+		try {
+			connection.setAutoCommit(false);
+			List<Match> matchs = listMatchs(connection, championshipId, returnMatchs);
+			MatchDAO dao = DAOManager.getDAO(connection, MatchDAO.class);
+			dao.create(matchs);
+			connection.commit();
+			connection.setAutoCommit(true);
+		} catch (DAOCrudException | DataValidationException | DAOInstantiationException | SQLException ex) {
+			try {
+				if (!connection.getAutoCommit()) {
+					connection.rollback();
+					connection.setAutoCommit(true);
+				}
+			} catch (SQLException ex2) {
+				throw new CalendarGenerationException(ex);
+			}
+			throw new CalendarGenerationException(ex);
+		}
+	}
 	
 	public static List<Match> listMatchs(Connection connection, Integer championshipId, boolean returnMatchs)
 	throws CalendarGenerationException {
@@ -162,7 +188,7 @@ public class ChampionshipCalendarGenerator {
 				team1 = j%2 == 0 ? teams.get(firstTeamIndex-1) : teams.get(secondTeamIndex-1);
 				team2 = j%2 == 0 ? teams.get(secondTeamIndex-1) : teams.get(firstTeamIndex-1);
 				if (!isExemptMatch(team1, team2)) {
-					match = new Match();
+					match = createMatch();
 					match.setFirstTeam(team1.getTeam());
 					match.setSecondTeam(team2.getTeam());
 					match.setStep(j);
@@ -201,18 +227,32 @@ public class ChampionshipCalendarGenerator {
 		final List<Match> newMatchs = new ArrayList<>();
 		Iterator<Match> it = matchs.iterator();
 		Match match, match2;
+		SeasonTeam seasonTeam;
 		int j;
 		while (it.hasNext()) {
 			match = it.next();
 			j = match.getStep() + dayCount;
-			match2 = new Match();
+			match2 = createMatch();
 			match2.setFirstTeam(match.getSecondTeam());
 			match2.setSecondTeam(match.getFirstTeam());
 			match2.setStep(j);
-			match2.setDate(weeks.get(j-1).getWeekDate());
+			seasonTeam = match.getFirstTeam();
+			match2.setDate(weeks.get(j-1)
+					            .getWeekDate()
+					            .plusDays(seasonTeam.getDate().getDayOfWeek().getValue() - 1)
+					            .plusHours(seasonTeam.getDate().getHour())
+					            .plusMinutes(seasonTeam.getDate().getMinute()));
 			newMatchs.add(match2);
 		}
 		this.matchs.addAll(newMatchs);
+	}
+	
+	private Match createMatch() {
+		Match match = new Match();
+		match.setChampionship(this.championship);
+		match.setForfeit(false);
+		match.setState(Match.State.C);
+		return match;
 	}
 	
 	private void findSeasonTeams()
