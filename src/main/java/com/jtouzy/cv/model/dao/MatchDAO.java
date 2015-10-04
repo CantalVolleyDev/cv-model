@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import com.jtouzy.cv.model.classes.Championship;
 import com.jtouzy.cv.model.classes.Competition;
+import com.jtouzy.cv.model.classes.Gym;
 import com.jtouzy.cv.model.classes.Match;
 import com.jtouzy.cv.model.classes.SeasonTeam;
 import com.jtouzy.cv.model.classes.SeasonTeamPlayer;
@@ -66,7 +67,7 @@ public class MatchDAO extends AbstractSingleIdentifierDAO<Match> {
 				orContext.addInCriterion(Match.SECOND_TEAM_FIELD, teamIds);
 				query.context().addOrCriterion(orContext);
 			}
-			query.context().orderBy(Match.DATE_FIELD, false);
+			query.context().orderBy(Match.DATE_FIELD, true);
 			return query.many();
 		} catch (ContextMissingException ex) {
 			throw new QueryException(ex);
@@ -98,7 +99,8 @@ public class MatchDAO extends AbstractSingleIdentifierDAO<Match> {
 			Query<Match> query = super.query();
 			query.context()
 		         .addDirectJoin(SeasonTeam.class, "eq1", Match.FIRST_TEAM_FIELD)
-		         .addDirectJoin(SeasonTeam.class, "eq2", Match.SECOND_TEAM_FIELD);
+		         .addDirectJoin(SeasonTeam.class, "eq2", Match.SECOND_TEAM_FIELD)
+		         .addDirectJoin(ModelContext.getTableContext(Gym.class), "eq1");
 			return query;
 		} catch (ContextMissingException ex) {
 			throw new QueryException(ex);
