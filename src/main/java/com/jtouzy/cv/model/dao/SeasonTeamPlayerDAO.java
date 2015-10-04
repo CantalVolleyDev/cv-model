@@ -1,6 +1,5 @@
 package com.jtouzy.cv.model.dao;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.jtouzy.cv.model.classes.SeasonTeam;
@@ -25,7 +24,12 @@ public class SeasonTeamPlayerDAO extends AbstractDAO<SeasonTeamPlayer> {
 		return query.many();
 	}
 	
-	// FIXME: Attention dessous il faudra le changer!
+	public List<SeasonTeamPlayer> getAllBySeasonTeamIn(List<Integer> seasonTeamIds)
+	throws QueryException {
+		Query<SeasonTeamPlayer> query = queryWithDetails();
+		query.context().addInCriterion(SeasonTeamPlayer.SEASON_TEAM_FIELD, seasonTeamIds);
+		return query.many();
+	}
 	
 	public List<SeasonTeamPlayer> getAllBySeasonAndPlayer(Integer seasonId, Integer playerId)
 	throws QueryException {
@@ -37,31 +41,6 @@ public class SeasonTeamPlayerDAO extends AbstractDAO<SeasonTeamPlayer> {
 			}
 			if (playerId != null) {
 				query.context().addEqualsCriterion(SeasonTeamPlayer.PLAYER_FIELD, playerId);
-			}
-			return query.many();
-		} catch (ContextMissingException ex) {
-			throw new QueryException(ex);
-		}
-	}
-	
-	public List<SeasonTeamPlayer> getAllBySeasonAndTeam(Integer seasonId, Integer teamId)
-	throws QueryException {
-		return getAllBySeasonAndTeamIn(seasonId, Arrays.asList(teamId));
-	}
-	
-	public List<SeasonTeamPlayer> getAllBySeasonAndTeamIn(Integer seasonId, List<Integer> teamIds)
-	throws QueryException {
-		try {
-			Query<SeasonTeamPlayer> query = queryWithDetails();
-			if (seasonId != null) {
-				query.context().addDirectJoin(SeasonTeam.class)
-				   			   .addEqualsCriterion(SeasonTeam.class, SeasonTeam.SEASON_FIELD, seasonId);
-			}
-			if (teamIds != null && teamIds.size() > 0) {
-				if (seasonId == null) {
-					query.context().addDirectJoin(SeasonTeam.class);
-				}
-				query.context().addInCriterion(SeasonTeam.class, SeasonTeam.TEAM_FIELD, teamIds);
 			}
 			return query.many();
 		} catch (ContextMissingException ex) {
