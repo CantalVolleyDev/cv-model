@@ -27,9 +27,6 @@ public class ChampionshipWeeks {
 	@NotNull(message = "Le championnat doit être renseigné")
 	private Championship championship;
 	@Id
-	@Column(name = WEEK_NUMBER_FIELD, nullable = false, columnDefinition = DBTypeConstants.INTEGER)
-	@NotNull(message = "Le numéro de semaine doit être renseigné")
-	private Integer weekNumber;
 	@Column(name = WEEK_DATE_FIELD, nullable = false, columnDefinition = DBTypeConstants.DATETIME)
 	@NotNull(message = "Le date de la semaine doit être renseignée")
 	private LocalDateTime weekDate;
@@ -39,12 +36,6 @@ public class ChampionshipWeeks {
 	}
 	public void setChampionship(Championship championship) {
 		this.championship = championship;
-	}
-	public Integer getWeekNumber() {
-		return weekNumber;
-	}
-	public void setWeekNumber(Integer weekNumber) {
-		this.weekNumber = weekNumber;
 	}
 	public LocalDateTime getWeekDate() {
 		return weekDate;
