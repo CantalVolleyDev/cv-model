@@ -30,6 +30,7 @@ public class SeasonTeam {
 	public static final int INFO_FIELD_LENGTH = 40;
 	public static final String IMAGE_FIELD = "imgeqs";
 	public static final int IMAGE_FIELD_LENGTH = 5;
+	public static final String PLAYER_NUMBER_FIELD = "nbpeqs";
 	
 	@Id
 	@GeneratedValue
@@ -77,6 +78,10 @@ public class SeasonTeam {
 	@Column(name = IMAGE_FIELD, length = IMAGE_FIELD_LENGTH, columnDefinition = DBTypeConstants.VARCHAR)
 	@Size(max = IMAGE_FIELD_LENGTH, message = "La taille de l'extension de l'image doit être au maximum de {max}")
 	private String image;
+	
+	@Column(name = PLAYER_NUMBER_FIELD, nullable = false, columnDefinition = DBTypeConstants.INTEGER)
+	@NotNull(message = "Le nombre de joueur de l'équipe (pour un match) doit être renseigné")
+	private Integer playersNumber;
 	
 	public Integer getIdentifier() {
 		return identifier;
@@ -132,6 +137,12 @@ public class SeasonTeam {
 	public void setImage(String image) {
 		this.image = image;
 	}
+	public Integer getPlayersNumber() {
+		return playersNumber;
+	}
+	public void setPlayersNumber(Integer playersNumber) {
+		this.playersNumber = playersNumber;
+	}
 	
 	@Override
 	public String toString() {
@@ -154,6 +165,8 @@ public class SeasonTeam {
 		builder.append(information);
 		builder.append(", image=");
 		builder.append(image);
+		builder.append(", playersNumber=");
+		builder.append(playersNumber);
 		builder.append("]");
 		return builder.toString();
 	}
