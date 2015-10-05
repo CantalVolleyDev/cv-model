@@ -59,7 +59,7 @@ public class ChampionshipTeamDAO extends AbstractDAO<ChampionshipTeam> {
 			} 
 			if (teamIds != null) {
 				query.context().addDirectJoin(SeasonTeam.class)
-							   .addInCriterion(SeasonTeam.class, SeasonTeam.TEAM_FIELD, teamIds);
+							   .addInCriterion(SeasonTeam.class, SeasonTeam.IDENTIFIER_FIELD, teamIds);
 			}
 			return query.many();
 		} catch (ContextMissingException ex) {
