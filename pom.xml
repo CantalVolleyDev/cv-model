@@ -4,7 +4,7 @@
 
   <groupId>com.jtouzy</groupId>
   <artifactId>cv-model</artifactId>
-  <version>0.0.1</version>
+  <version>1.1.0</version>
   <packaging>jar</packaging>
 
   <name>cv-model</name>
@@ -71,7 +71,7 @@
   		<dependency>
   			<groupId>com.jtouzy</groupId>
   			<artifactId>jto-dao-module</artifactId>
-  			<version>0.0.1</version>
+  			<version>1.1.0</version>
   		</dependency>
   	</dependencies>
   </dependencyManagement>
