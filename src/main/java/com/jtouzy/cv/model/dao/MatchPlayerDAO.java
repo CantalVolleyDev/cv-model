@@ -23,7 +23,7 @@ public class MatchPlayerDAO extends AbstractDAO<MatchPlayer> {
 		try {
 			Query<MatchPlayer> query = query();
 			if (matchId != null) {
-				query.context().addDirectJoin(User.class)
+				query.context().addLeftOuterJoin(User.class)
 				               .addEqualsCriterion(MatchPlayer.MATCH_FIELD, matchId);
 			}
 			return query.many();
