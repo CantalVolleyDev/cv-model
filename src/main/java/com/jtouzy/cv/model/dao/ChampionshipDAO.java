@@ -154,7 +154,7 @@ public class ChampionshipDAO extends AbstractSingleIdentifierDAO<Championship> {
 	
 	private ChampionshipTeam getChampionshipTeam(List<ChampionshipTeam> list, SeasonTeam team) {
 		Optional<ChampionshipTeam> opt = list.stream()
-				                             .filter(ct -> ct.getTeam().getIdentifier() == team.getIdentifier())
+				                             .filter(ct -> ct.getTeam().getIdentifier().equals(team.getIdentifier()))
 				                             .findFirst();
 		if (!opt.isPresent())
 			return null;
