@@ -1,6 +1,7 @@
 package com.jtouzy.cv.model.dao;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,6 +35,26 @@ public class MatchDAO extends AbstractSingleIdentifierDAO<Match> {
 			     .addDirectJoin(ModelContext.getTableContext(Competition.class), Championship.TABLE)
 			     .addEqualsCriterion(Match.IDENTIFIER_FIELD, matchId);
 			return query.one();
+		} catch (ContextMissingException ex) {
+			throw new QueryException(ex);
+		}
+	}
+	
+	public List<Match> getAllPlayedBySeasonTeam(Integer teamId, Integer limitTo)
+	throws QueryException {
+		try {
+			Query<Match> query = queryWithTeamDetails();
+			query.context().addInCriterion(Match.STATE_FIELD, Arrays.asList(
+					Match.State.V, Match.State.R, Match.State.S, Match.State.F));
+			if (teamId != null) {
+				OrContext orContext = new OrContext(query.context());
+				orContext.addEqualsCriterion(Match.FIRST_TEAM_FIELD, teamId);
+				orContext.addEqualsCriterion(Match.SECOND_TEAM_FIELD, teamId);
+				query.context().addOrCriterion(orContext);
+			}
+			query.context().limitTo(limitTo);
+			query.context().orderBy(Match.DATE_FIELD, true);
+			return query.many();
 		} catch (ContextMissingException ex) {
 			throw new QueryException(ex);
 		}
