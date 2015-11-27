@@ -5,16 +5,13 @@ import java.util.List;
 import com.jtouzy.cv.model.classes.Comment;
 import com.jtouzy.cv.model.classes.User;
 import com.jtouzy.dao.errors.DAOCrudException;
-import com.jtouzy.dao.errors.DAOException;
 import com.jtouzy.dao.errors.QueryException;
-import com.jtouzy.dao.errors.model.ContextMissingException;
 import com.jtouzy.dao.impl.AbstractSingleIdentifierDAO;
 import com.jtouzy.dao.query.CUD;
 import com.jtouzy.dao.query.Query;
 
 public class CommentDAO extends AbstractSingleIdentifierDAO<Comment> {
-	public CommentDAO()
-	throws DAOException {
+	public CommentDAO() {
 		super(Comment.class);
 	}
 	
@@ -26,14 +23,10 @@ public class CommentDAO extends AbstractSingleIdentifierDAO<Comment> {
 	 */
 	public List<Comment> getAllByMatch(Integer matchId)
 	throws QueryException {
-		try {
-			Query<Comment> query = queryEntityComment(matchId, Comment.Entity.MAT);
-			query.context().addDirectJoin(User.class);
-			query.context().orderBy(Comment.DATE_FIELD, true);
-			return query.many();
-		} catch (ContextMissingException ex) {
-			throw new QueryException(ex);
-		}
+		Query<Comment> query = queryEntityComment(matchId, Comment.Entity.MAT);
+		query.context().addDirectJoin(User.class);
+		query.context().orderBy(Comment.DATE_FIELD, true);
+		return query.many();
 	}
 	
 	/**
@@ -44,14 +37,10 @@ public class CommentDAO extends AbstractSingleIdentifierDAO<Comment> {
 	 */
 	public List<Comment> getAllByTeam(Integer teamId)
 	throws QueryException {
-		try {
-			Query<Comment> query = queryEntityComment(teamId, Comment.Entity.EQI);
-			query.context().addDirectJoin(User.class);
-			query.context().orderBy(Comment.DATE_FIELD, true);
-			return query.many();
-		} catch (ContextMissingException ex) {
-			throw new QueryException(ex);
-		}
+		Query<Comment> query = queryEntityComment(teamId, Comment.Entity.EQI);
+		query.context().addDirectJoin(User.class);
+		query.context().orderBy(Comment.DATE_FIELD, true);
+		return query.many();
 	}
 	
 	/**
@@ -68,8 +57,7 @@ public class CommentDAO extends AbstractSingleIdentifierDAO<Comment> {
 		return query.one();
 	}
 	
-	private Query<Comment> queryEntityComment(Integer entityId, Comment.Entity entity)
-	throws QueryException {
+	private Query<Comment> queryEntityComment(Integer entityId, Comment.Entity entity) {
 		Query<Comment> query = query();
 		query.context().addEqualsCriterion(Comment.ENTITY_FIELD, entity);
 		query.context().addEqualsCriterion(Comment.ENTITY_VALUE_FIELD, entityId);
@@ -87,7 +75,7 @@ public class CommentDAO extends AbstractSingleIdentifierDAO<Comment> {
 			}
 			cud.executeDelete();
 			//FIXME: QueryException??
-		} catch (ContextMissingException | QueryException ex) {
+		} catch (QueryException ex) {
 			throw new DAOCrudException(Comment.class, ex);
 		}
 	}

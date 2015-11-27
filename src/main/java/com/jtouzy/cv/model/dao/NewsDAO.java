@@ -4,15 +4,12 @@ import java.util.List;
 
 import com.jtouzy.cv.model.classes.News;
 import com.jtouzy.cv.model.classes.User;
-import com.jtouzy.dao.errors.DAOException;
 import com.jtouzy.dao.errors.QueryException;
-import com.jtouzy.dao.errors.model.ContextMissingException;
 import com.jtouzy.dao.impl.AbstractSingleIdentifierDAO;
 import com.jtouzy.dao.query.Query;
 
 public class NewsDAO extends AbstractSingleIdentifierDAO<News> {
-	public NewsDAO()
-	throws DAOException {
+	public NewsDAO() {
 		super(News.class);
 	}
 	
@@ -28,21 +25,16 @@ public class NewsDAO extends AbstractSingleIdentifierDAO<News> {
 		return query.many();
 	}
 	
-	private Query<News> queryWithDetails(Integer limitTo, Integer page)
-	throws QueryException {
-		try {
-			Query<News> query = query();
-			query.context().addDirectJoin(User.class);
-			Integer offset = null;
-			if (limitTo != null && page != null && page > 1) {
-				offset = limitTo * (page-1);
-			}
-			query.context()
-			     .limitTo(limitTo)
-			     .offset(offset);
-			return query;
-		} catch (ContextMissingException ex) {
-			throw new QueryException(ex);
+	private Query<News> queryWithDetails(Integer limitTo, Integer page) {
+		Query<News> query = query();
+		query.context().addDirectJoin(User.class);
+		Integer offset = null;
+		if (limitTo != null && page != null && page > 1) {
+			offset = limitTo * (page-1);
 		}
+		query.context()
+		     .limitTo(limitTo)
+		     .offset(offset);
+		return query;
 	}
 }

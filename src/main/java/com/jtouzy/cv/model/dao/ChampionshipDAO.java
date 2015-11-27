@@ -18,10 +18,7 @@ import com.jtouzy.cv.model.classes.SeasonTeam;
 import com.jtouzy.cv.model.errors.RankingsCalculateException;
 import com.jtouzy.dao.DAOManager;
 import com.jtouzy.dao.errors.DAOCrudException;
-import com.jtouzy.dao.errors.DAOException;
-import com.jtouzy.dao.errors.DAOInstantiationException;
 import com.jtouzy.dao.errors.QueryException;
-import com.jtouzy.dao.errors.model.ContextMissingException;
 import com.jtouzy.dao.errors.validation.DataValidationException;
 import com.jtouzy.dao.impl.AbstractSingleIdentifierDAO;
 import com.jtouzy.dao.model.ModelContext;
@@ -30,8 +27,7 @@ import com.jtouzy.dao.query.Query;
 import com.jtouzy.dao.query.QueryCollection;
 
 public class ChampionshipDAO extends AbstractSingleIdentifierDAO<Championship> {
-	public ChampionshipDAO()
-	throws DAOException {
+	public ChampionshipDAO() {
 		super(Championship.class);
 	}
 	
@@ -43,79 +39,69 @@ public class ChampionshipDAO extends AbstractSingleIdentifierDAO<Championship> {
 	 */
 	public Championship getOneWithTeamsAndMatchs(Integer championshipId)
 	throws QueryException {
-		try {
-			Championship championship = getOneWithTeams(championshipId);
-			if (championship == null)
-				return null;
-			championship.setMatchs(DAOManager.getDAO(this.connection, MatchDAO.class).getAllByChampionship(championshipId));
-			return championship;
-		} catch (DAOInstantiationException ex) {
-			throw new QueryException(ex);
-		}
+		Championship championship = getOneWithTeams(championshipId);
+		if (championship == null)
+			return null;
+		championship.setMatchs(DAOManager.getDAO(this.connection, MatchDAO.class).getAllByChampionship(championshipId));
+		return championship;
 	}
 	
 	public Championship getOneWithTeams(Integer championshipId)
 	throws QueryException {
-		try {
-			QueryCollection<Championship,ChampionshipTeam> teamsQuery = queryCollection(ChampionshipTeam.class);
-			teamsQuery.context().addDirectJoin(ModelContext.getTableContext(SeasonTeam.class), ChampionshipTeam.TABLE)
-			                    .addDirectJoin(ModelContext.getTableContext(Gym.class), SeasonTeam.TABLE)
-			                    .addEqualsCriterion(Championship.class, Championship.IDENTIFIER_FIELD, championshipId);
-			Championship championship = teamsQuery.fillOne();
-			// Le tri est effectué par :
-			// - Points
-			// - Différence de sets
-			// - Différence de points
-			// - Points encaissés le plus faible
-			Collections.sort(championship.getTeams(), new Comparator<ChampionshipTeam>() {
-				@Override
-				public int compare(ChampionshipTeam o1, ChampionshipTeam o2) {
-					if (o1.getPoints() > o2.getPoints())
+		QueryCollection<Championship,ChampionshipTeam> teamsQuery = queryCollection(ChampionshipTeam.class);
+		teamsQuery.context().addDirectJoin(ModelContext.getTableContext(SeasonTeam.class), ChampionshipTeam.TABLE)
+		                    .addDirectJoin(ModelContext.getTableContext(Gym.class), SeasonTeam.TABLE)
+		                    .addEqualsCriterion(Championship.class, Championship.IDENTIFIER_FIELD, championshipId);
+		Championship championship = teamsQuery.fillOne();
+		// Le tri est effectué par :
+		// - Points
+		// - Différence de sets
+		// - Différence de points
+		// - Points encaissés le plus faible
+		Collections.sort(championship.getTeams(), new Comparator<ChampionshipTeam>() {
+			@Override
+			public int compare(ChampionshipTeam o1, ChampionshipTeam o2) {
+				if (o1.getPoints() > o2.getPoints())
+					return -1;
+				else if (o1.getPoints() < o2.getPoints())
+					return 1;
+				else {
+					int firstSetDiff = o1.getSetsFor() - o1.getSetsAgainst();
+					int secondSetDiff = o2.getSetsFor() - o2.getSetsAgainst();
+					if (firstSetDiff > secondSetDiff)
 						return -1;
-					else if (o1.getPoints() < o2.getPoints())
+					else if (secondSetDiff > firstSetDiff)
 						return 1;
 					else {
-						int firstSetDiff = o1.getSetsFor() - o1.getSetsAgainst();
-						int secondSetDiff = o2.getSetsFor() - o2.getSetsAgainst();
-						if (firstSetDiff > secondSetDiff)
+						int firstPointsDiff = o1.getPointsFor() - o1.getPointsAgainst();
+						int secondPointsDiff = o2.getPointsFor() - o2.getPointsAgainst();
+						if (firstPointsDiff > secondPointsDiff)
 							return -1;
-						else if (secondSetDiff > firstSetDiff)
+						else if (secondPointsDiff > firstPointsDiff)
 							return 1;
 						else {
-							int firstPointsDiff = o1.getPointsFor() - o1.getPointsAgainst();
-							int secondPointsDiff = o2.getPointsFor() - o2.getPointsAgainst();
-							if (firstPointsDiff > secondPointsDiff)
-								return -1;
-							else if (secondPointsDiff > firstPointsDiff)
+							if (o1.getPointsAgainst() > o2.getPointsAgainst())
 								return 1;
+							else if (o2.getPointsAgainst() > o1.getPointsAgainst())
+								return -1;
 							else {
-								if (o1.getPointsAgainst() > o2.getPointsAgainst())
-									return 1;
-								else if (o2.getPointsAgainst() > o1.getPointsAgainst())
-									return -1;
-								else {
-									return o1.getTeam().getLabel().compareTo(o2.getTeam().getLabel());
-								}
+								return o1.getTeam().getLabel().compareTo(o2.getTeam().getLabel());
 							}
 						}
 					}
 				}
-			});
-			return championship;
-		} catch (ContextMissingException ex) {
-			throw new QueryException(ex);
-		}
+			}
+		});
+		return championship;
 	}
 	
 	public Championship getOneWithDetails(Integer championshipId)
 	throws QueryException {
-		try {
-			Query<Championship> query = query();
-			query.context().addDirectJoin(Competition.class);
-			return query.one();
-		} catch (ContextMissingException ex) {
-			throw new QueryException(ex); 
-		}
+		Query<Championship> query = query();
+		query.context()
+		     .addDirectJoin(Competition.class)
+		     .addEqualsCriterion(Championship.IDENTIFIER_FIELD, championshipId);
+		return query.one();
 	}
 	
 	public void calculateRankings(Integer championshipId)
@@ -162,7 +148,7 @@ public class ChampionshipDAO extends AbstractSingleIdentifierDAO<Championship> {
 			             .addColumnValue(ChampionshipTeam.WIN_FIELD, 0)
 					     .addEqualsCriterion(ChampionshipTeam.CHAMPIONSHIP_FIELD, championshipId);
 			cud.executeUpdate();
-		} catch (ContextMissingException | QueryException ex) {
+		} catch (QueryException ex) {
 			throw new RankingsCalculateException(ex);
 		}
 	}
@@ -187,7 +173,7 @@ public class ChampionshipDAO extends AbstractSingleIdentifierDAO<Championship> {
 				team1 = itc.next();
 				ctDao.update(team1);
 			}
-		} catch (DAOInstantiationException | QueryException | DAOCrudException ex) {
+		} catch (QueryException | DAOCrudException ex) {
 			throw new RankingsCalculateException(ex);
 		}
 	}
@@ -221,7 +207,7 @@ public class ChampionshipDAO extends AbstractSingleIdentifierDAO<Championship> {
 			// Mise à jour en base de données
 			ctDao.update(firstTeam);
 			ctDao.update(secondTeam);
-		} catch (DAOInstantiationException | QueryException | DAOCrudException ex) {
+		} catch (QueryException | DAOCrudException ex) {
 			throw new RankingsCalculateException(ex);
 		}
 	}

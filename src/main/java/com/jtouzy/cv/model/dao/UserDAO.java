@@ -4,14 +4,12 @@ import java.util.List;
 
 import com.google.common.base.Strings;
 import com.jtouzy.cv.model.classes.User;
-import com.jtouzy.dao.errors.DAOException;
 import com.jtouzy.dao.errors.QueryException;
 import com.jtouzy.dao.impl.AbstractSingleIdentifierDAO;
 import com.jtouzy.dao.query.Query;
 
 public class UserDAO extends AbstractSingleIdentifierDAO<User> {
-	public UserDAO()
-	throws DAOException {
+	public UserDAO() {
 		super(User.class);
 	}
 	

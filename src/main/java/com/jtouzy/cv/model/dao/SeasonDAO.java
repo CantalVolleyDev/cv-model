@@ -3,9 +3,7 @@ package com.jtouzy.cv.model.dao;
 import com.jtouzy.cv.model.cache.ApplicationCache;
 import com.jtouzy.cv.model.classes.Season;
 import com.jtouzy.dao.errors.DAOCrudException;
-import com.jtouzy.dao.errors.DAOException;
 import com.jtouzy.dao.errors.QueryException;
-import com.jtouzy.dao.errors.model.TableContextNotFoundException;
 import com.jtouzy.dao.errors.validation.DataValidationException;
 import com.jtouzy.dao.impl.AbstractSingleIdentifierDAO;
 import com.jtouzy.dao.query.Query;
@@ -16,11 +14,9 @@ import com.jtouzy.dao.query.Query;
  */
 public class SeasonDAO extends AbstractSingleIdentifierDAO<Season> {
 	/**
-	 * Constructeur du DAO 
-	 * @throws DAOException Si la validation technique du DAO est incorrecte
+	 * Constructeur du DAO
 	 */
-	public SeasonDAO()
-	throws DAOException {
+	public SeasonDAO() {
 		super(Season.class);
 	}
 	
@@ -50,17 +46,13 @@ public class SeasonDAO extends AbstractSingleIdentifierDAO<Season> {
 	 */
 	public Season getCurrentSeason()
 	throws QueryException {
-		try {
-			Season cached = ApplicationCache.getCurrentSeason();
-			if (cached == null) {
-				Query<Season> query = Query.build(this.connection, this.daoClass);
-				query.context().addEqualsCriterion(Season.CURRENT_FIELD, true);
-				cached = query.one();
-				ApplicationCache.setCurrentSeason(cached);
-			}
-			return cached;
-		} catch (TableContextNotFoundException ex) {
-			throw new QueryException(ex);
+		Season cached = ApplicationCache.getCurrentSeason();
+		if (cached == null) {
+			Query<Season> query = Query.build(this.connection, this.daoClass);
+			query.context().addEqualsCriterion(Season.CURRENT_FIELD, true);
+			cached = query.one();
+			ApplicationCache.setCurrentSeason(cached);
 		}
+		return cached;
 	}
 }

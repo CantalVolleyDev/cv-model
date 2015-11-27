@@ -5,15 +5,12 @@ import java.util.List;
 
 import com.jtouzy.cv.model.classes.ChampionshipTeam;
 import com.jtouzy.cv.model.classes.SeasonTeam;
-import com.jtouzy.dao.errors.DAOException;
 import com.jtouzy.dao.errors.QueryException;
-import com.jtouzy.dao.errors.model.ContextMissingException;
 import com.jtouzy.dao.impl.AbstractDAO;
 import com.jtouzy.dao.query.Query;
 
 public class ChampionshipTeamDAO extends AbstractDAO<ChampionshipTeam> {
-	public ChampionshipTeamDAO()
-	throws DAOException {
+	public ChampionshipTeamDAO() {
 		super(ChampionshipTeam.class);
 	}
 	
@@ -52,18 +49,14 @@ public class ChampionshipTeamDAO extends AbstractDAO<ChampionshipTeam> {
 	 */
 	public List<ChampionshipTeam> getAllByChampionshipIn(Integer championshipId, List<Integer> teamIds)
 	throws QueryException {
-		try {
-			Query<ChampionshipTeam> query = query();
-			if (championshipId != null) {
-				query.context().addEqualsCriterion(ChampionshipTeam.CHAMPIONSHIP_FIELD, championshipId);
-			} 
-			if (teamIds != null) {
-				query.context().addDirectJoin(SeasonTeam.class)
-							   .addInCriterion(SeasonTeam.class, SeasonTeam.IDENTIFIER_FIELD, teamIds);
-			}
-			return query.many();
-		} catch (ContextMissingException ex) {
-			throw new QueryException(ex);
+		Query<ChampionshipTeam> query = query();
+		if (championshipId != null) {
+			query.context().addEqualsCriterion(ChampionshipTeam.CHAMPIONSHIP_FIELD, championshipId);
+		} 
+		if (teamIds != null) {
+			query.context().addDirectJoin(SeasonTeam.class)
+						   .addInCriterion(SeasonTeam.class, SeasonTeam.IDENTIFIER_FIELD, teamIds);
 		}
+		return query.many();
 	}
 }
