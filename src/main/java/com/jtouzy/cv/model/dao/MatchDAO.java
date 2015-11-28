@@ -45,7 +45,7 @@ public class MatchDAO extends AbstractSingleIdentifierDAO<Match> {
 			query.context().addOrCriterion(orContext);
 		}
 		query.context().limitTo(limitTo);
-		query.context().orderBy(Match.DATE_FIELD, true);
+		query.context().orderBy(Match.DATE_FIELD, false);
 		return query.many();
 	}
 	
