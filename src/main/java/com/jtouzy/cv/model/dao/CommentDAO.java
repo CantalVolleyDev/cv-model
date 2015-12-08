@@ -1,8 +1,11 @@
 package com.jtouzy.cv.model.dao;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.jtouzy.cv.model.classes.Comment;
+import com.jtouzy.cv.model.classes.Match;
+import com.jtouzy.cv.model.classes.SeasonTeamPlayer;
 import com.jtouzy.cv.model.classes.User;
 import com.jtouzy.dao.errors.DAOCrudException;
 import com.jtouzy.dao.errors.QueryException;
@@ -40,6 +43,25 @@ public class CommentDAO extends AbstractSingleIdentifierDAO<Comment> {
 		Query<Comment> query = queryEntityComment(teamId, Comment.Entity.EQI);
 		query.context().addDirectJoin(User.class);
 		query.context().orderBy(Comment.DATE_FIELD, true);
+		return query.many();
+	}
+	
+	public List<Comment> getAllLastMatchCommentsByTeam(
+			List<Match> lastMatchs, List<SeasonTeamPlayer> playersToExclude, Integer limit)
+	throws QueryException {
+		Query<Comment> query = query();
+		query.context().addDirectJoin(User.class);
+		query.context().limitTo(limit);
+		query.context().orderBy(Comment.DATE_FIELD, false);
+		query.context().addEqualsCriterion(Comment.ENTITY_FIELD, Comment.Entity.MAT);
+		query.context().addNotInCriterion(Comment.USER_FIELD, 
+				playersToExclude.stream()
+								.map(p -> p.getPlayer().getIdentifier())
+								.collect(Collectors.toList()));
+		query.context().addInCriterion(Comment.ENTITY_VALUE_FIELD, 
+				lastMatchs.stream()
+				          .map(m -> m.getIdentifier())
+				          .collect(Collectors.toList()));
 		return query.many();
 	}
 	
