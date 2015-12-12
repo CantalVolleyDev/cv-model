@@ -53,6 +53,8 @@ public class ChampionshipDAO extends AbstractSingleIdentifierDAO<Championship> {
 		                    .addDirectJoin(ModelContext.getTableContext(Gym.class), SeasonTeam.TABLE)
 		                    .addEqualsCriterion(Championship.class, Championship.IDENTIFIER_FIELD, championshipId);
 		Championship championship = teamsQuery.fillOne();
+		if (championship == null)
+			return null;
 		// Le tri est effectué par :
 		// - Points
 		// - Différence de sets
