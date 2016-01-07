@@ -201,6 +201,6 @@ public class Competition {
 	}
 	
 	public enum State {
-		C, V
+		C, V, A
 	}
 }

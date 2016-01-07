@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import com.jtouzy.dao.db.DBTypeConstants;
 
@@ -38,6 +39,9 @@ public class Match {
 	public static final String S42_FIELD = "s42mat";
 	public static final String S51_FIELD = "s51mat";
 	public static final String S52_FIELD = "s52mat";
+	public static final String DESCRIPTION_FIELD = "dscmat";
+	public static final int DESCRIPTION_FIELD_LENGTH = 4000;
+	public static final String GYM_FIELD = "gymmat";
 	
 	@Id
 	@GeneratedValue
@@ -114,6 +118,16 @@ public class Match {
 	private Integer s51;
 	@Column(name = S52_FIELD, columnDefinition = DBTypeConstants.INTEGER)
 	private Integer s52;
+	
+	@Column(name = DESCRIPTION_FIELD, length = DESCRIPTION_FIELD_LENGTH, columnDefinition = DBTypeConstants.VARCHAR)
+	@Size(max = DESCRIPTION_FIELD_LENGTH, message = "La taille de la description doit être au maximum de {max}")
+	private String description;
+	
+	@JoinColumn(
+		name = GYM_FIELD, nullable = false, columnDefinition = DBTypeConstants.INTEGER,
+		referencedColumnName = Gym.IDENTIFIER_FIELD
+	)
+	private Gym gym;
 	
 	public Integer getIdentifier() {
 		return identifier;
@@ -246,6 +260,18 @@ public class Match {
 	}
 	public void setS52(Integer s52) {
 		this.s52 = s52;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	public Gym getGym() {
+		return gym;
+	}
+	public void setGym(Gym gym) {
+		this.gym = gym;
 	}
 
 	public enum State {

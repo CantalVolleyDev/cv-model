@@ -29,6 +29,8 @@ public class Championship {
 	public static final int TYPE_FIELD_LENGTH = 3;
 	public static final String STATE_FIELD = "stachp";
 	public static final int STATE_FIELD_LENGTH = 1;
+	public static final String DESCRIPTION_FIELD = "dscchp";
+	public static final int DESCRIPTION_FIELD_LENGTH = 1;
 	
 	@Id
 	@GeneratedValue
@@ -61,6 +63,10 @@ public class Championship {
 	@Column(name = STATE_FIELD, length = STATE_FIELD_LENGTH, nullable = false, columnDefinition = DBTypeConstants.ENUM)
 	@NotNull(message = "L'état doit être renseigné")
 	private Championship.State state;
+	
+	@Column(name = DESCRIPTION_FIELD, length = DESCRIPTION_FIELD_LENGTH, columnDefinition = DBTypeConstants.VARCHAR)
+	@Size(max = DESCRIPTION_FIELD_LENGTH, message = "La taille de la description doit être au maximum de {max}")
+	private String description;
 	
 	@OneToMany
 	private List<ChampionshipTeam> teams;
@@ -130,6 +136,12 @@ public class Championship {
 	public void setMatchs(List<Match> matchs) {
 		this.matchs = matchs;
 	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
 	
 	@Override
 	public String toString() {
@@ -156,9 +168,9 @@ public class Championship {
 		M, X, F
 	}
 	public enum Type {
-		CHP, CUP
+		CHP, CUP, QUA
 	}
 	public enum State {
-		C, V 
+		C, V, A
 	}
 }
