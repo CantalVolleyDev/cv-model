@@ -12,7 +12,6 @@ import com.jtouzy.cv.model.classes.Championship;
 import com.jtouzy.cv.model.classes.Championship.Type;
 import com.jtouzy.cv.model.classes.ChampionshipTeam;
 import com.jtouzy.cv.model.classes.Competition;
-import com.jtouzy.cv.model.classes.Gym;
 import com.jtouzy.cv.model.classes.Match;
 import com.jtouzy.cv.model.classes.SeasonTeam;
 import com.jtouzy.cv.model.errors.RankingsCalculateException;
@@ -21,10 +20,8 @@ import com.jtouzy.dao.errors.DAOCrudException;
 import com.jtouzy.dao.errors.QueryException;
 import com.jtouzy.dao.errors.validation.DataValidationException;
 import com.jtouzy.dao.impl.AbstractSingleIdentifierDAO;
-import com.jtouzy.dao.model.ModelContext;
 import com.jtouzy.dao.query.CUD;
 import com.jtouzy.dao.query.Query;
-import com.jtouzy.dao.query.QueryCollection;
 
 public class ChampionshipDAO extends AbstractSingleIdentifierDAO<Championship> {
 	public ChampionshipDAO() {
@@ -39,61 +36,60 @@ public class ChampionshipDAO extends AbstractSingleIdentifierDAO<Championship> {
 	 */
 	public Championship getOneWithTeamsAndMatchs(Integer championshipId)
 	throws QueryException {
-		Championship championship = getOneWithTeams(championshipId);
+		Championship championship = getOneWithDetails(championshipId);
 		if (championship == null)
 			return null;
-		championship.setMatchs(DAOManager.getDAO(this.connection, MatchDAO.class).getAllByChampionship(championshipId));
-		return championship;
-	}
-	
-	public Championship getOneWithTeams(Integer championshipId)
-	throws QueryException {
-		QueryCollection<Championship,ChampionshipTeam> teamsQuery = queryCollection(ChampionshipTeam.class);
-		teamsQuery.context().addDirectJoin(ModelContext.getTableContext(SeasonTeam.class), ChampionshipTeam.TABLE)
-		                    .addDirectJoin(ModelContext.getTableContext(Gym.class), SeasonTeam.TABLE)
-		                    .addEqualsCriterion(Championship.class, Championship.IDENTIFIER_FIELD, championshipId);
-		Championship championship = teamsQuery.fillOne();
-		if (championship == null)
-			return null;
-		// Le tri est effectué par :
-		// - Points
-		// - Différence de sets
-		// - Différence de points
-		// - Points encaissés le plus faible
-		Collections.sort(championship.getTeams(), new Comparator<ChampionshipTeam>() {
-			@Override
-			public int compare(ChampionshipTeam o1, ChampionshipTeam o2) {
-				if (o1.getPoints() > o2.getPoints())
-					return -1;
-				else if (o1.getPoints() < o2.getPoints())
-					return 1;
-				else {
-					int firstSetDiff = o1.getSetsFor() - o1.getSetsAgainst();
-					int secondSetDiff = o2.getSetsFor() - o2.getSetsAgainst();
-					if (firstSetDiff > secondSetDiff)
+		
+		if (championship.getType() == Championship.Type.CHP) 
+		{
+			championship.setTeams(
+					DAOManager.getDAO(this.connection, ChampionshipTeamDAO.class)
+						.getAllByChampionship(championshipId, true));
+			
+			// Le tri est effectué par :
+			// - Points
+			// - Différence de sets
+			// - Différence de points
+			// - Points encaissés le plus faible
+			Collections.sort(championship.getTeams(), new Comparator<ChampionshipTeam>() {
+				@Override
+				public int compare(ChampionshipTeam o1, ChampionshipTeam o2) {
+					if (o1.getPoints() > o2.getPoints())
 						return -1;
-					else if (secondSetDiff > firstSetDiff)
+					else if (o1.getPoints() < o2.getPoints())
 						return 1;
 					else {
-						int firstPointsDiff = o1.getPointsFor() - o1.getPointsAgainst();
-						int secondPointsDiff = o2.getPointsFor() - o2.getPointsAgainst();
-						if (firstPointsDiff > secondPointsDiff)
+						int firstSetDiff = o1.getSetsFor() - o1.getSetsAgainst();
+						int secondSetDiff = o2.getSetsFor() - o2.getSetsAgainst();
+						if (firstSetDiff > secondSetDiff)
 							return -1;
-						else if (secondPointsDiff > firstPointsDiff)
+						else if (secondSetDiff > firstSetDiff)
 							return 1;
 						else {
-							if (o1.getPointsAgainst() > o2.getPointsAgainst())
-								return 1;
-							else if (o2.getPointsAgainst() > o1.getPointsAgainst())
+							int firstPointsDiff = o1.getPointsFor() - o1.getPointsAgainst();
+							int secondPointsDiff = o2.getPointsFor() - o2.getPointsAgainst();
+							if (firstPointsDiff > secondPointsDiff)
 								return -1;
+							else if (secondPointsDiff > firstPointsDiff)
+								return 1;
 							else {
-								return o1.getTeam().getLabel().compareTo(o2.getTeam().getLabel());
+								if (o1.getPointsAgainst() > o2.getPointsAgainst())
+									return 1;
+								else if (o2.getPointsAgainst() > o1.getPointsAgainst())
+									return -1;
+								else {
+									return o1.getTeam().getLabel().compareTo(o2.getTeam().getLabel());
+								}
 							}
 						}
 					}
 				}
-			}
-		});
+			});
+		}
+		
+		championship.setMatchs(
+				DAOManager.getDAO(this.connection, MatchDAO.class)
+					.getAllByChampionship(championshipId));
 		return championship;
 	}
 	
@@ -120,7 +116,7 @@ public class ChampionshipDAO extends AbstractSingleIdentifierDAO<Championship> {
 			this.connection.commit();
 			this.connection.setAutoCommit(true);
 		} catch (SQLException | QueryException ex) {
-			
+			throw new RankingsCalculateException(ex);
 		} finally {
 			try {
 				if (this.connection.getAutoCommit()) {
@@ -195,12 +191,17 @@ public class ChampionshipDAO extends AbstractSingleIdentifierDAO<Championship> {
 			return;
 		}
 		try {
+			// Aucun calcul si on est sur un championnat autre qu'avec un classement
+			Championship chp = getOne(match.getChampionship().getIdentifier());
+			if (chp == null || chp.getType() != Championship.Type.CHP) {
+				return;
+			}
 			ChampionshipTeamDAO ctDao = DAOManager.getDAO(this.connection, ChampionshipTeamDAO.class);
 			// Recherche des 2 équipes du championnat en un seul select pour optimisation
 			List<ChampionshipTeam> teams = 
 					ctDao.getAllByChampionshipIn(match.getChampionship().getIdentifier(),
 							Arrays.asList(match.getFirstTeam().getIdentifier(),
-									      match.getSecondTeam().getIdentifier())); 
+									      match.getSecondTeam().getIdentifier()), false); 
 			// Ensuite, on retrouve celle de la première équipe et la seconde du match
 			ChampionshipTeam firstTeam = getChampionshipTeam(teams, match.getFirstTeam());
 			ChampionshipTeam secondTeam = getChampionshipTeam(teams, match.getSecondTeam());

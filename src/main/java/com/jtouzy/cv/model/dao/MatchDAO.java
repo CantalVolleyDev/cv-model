@@ -28,6 +28,7 @@ public class MatchDAO extends AbstractSingleIdentifierDAO<Match> {
 		Query<Match> query = queryWithTeamDetails();
 		query.context()
 		     .addDirectJoin(Championship.class)
+		     .addDirectJoin(Gym.class)
 		     .addDirectJoin(ModelContext.getTableContext(Competition.class), Championship.TABLE)
 		     .addEqualsCriterion(Match.IDENTIFIER_FIELD, matchId);
 		return query.one();
@@ -95,6 +96,7 @@ public class MatchDAO extends AbstractSingleIdentifierDAO<Match> {
 	private Query<Match> queryByChampionship(Integer championshipId) {
 		Query<Match> query = queryWithTeamDetails();
 		query.context().addEqualsCriterion(Match.CHAMPIONSHIP_FIELD, championshipId);
+		query.context().orderBy(Match.ORDER_FIELD, true);
 		return query;
 	}
 	
