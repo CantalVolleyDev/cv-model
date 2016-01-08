@@ -105,7 +105,7 @@ public class MatchDAO extends AbstractSingleIdentifierDAO<Match> {
 		query.context()
 	         .addDirectJoin(SeasonTeam.class, "eq1", Match.FIRST_TEAM_FIELD)
 	         .addDirectJoin(SeasonTeam.class, "eq2", Match.SECOND_TEAM_FIELD)
-	         .addDirectJoin(ModelContext.getTableContext(Gym.class), "eq1");
+	         .addDirectJoin(Gym.class);
 		return query;
 	}
 }
