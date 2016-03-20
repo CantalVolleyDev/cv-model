@@ -95,9 +95,9 @@ public class Match {
 	private Boolean forfeit;
 	
 	@Column(name = FIRST_SCORE_FIELD, columnDefinition = DBTypeConstants.INTEGER)
-	private Integer sc1;
+	private Integer firstScore;
 	@Column(name = SECOND_SCORE_FIELD, columnDefinition = DBTypeConstants.INTEGER)
-	private Integer sc2;
+	private Integer secondScore;
 	@Column(name = S11_FIELD, columnDefinition = DBTypeConstants.INTEGER)
 	private Integer s11;
 	@Column(name = S12_FIELD, columnDefinition = DBTypeConstants.INTEGER)
@@ -189,17 +189,17 @@ public class Match {
 	public void setForfeit(Boolean forfeit) {
 		this.forfeit = forfeit;
 	}
-	public Integer getSc1() {
-		return sc1;
+	public Integer getFirstScore() {
+		return firstScore;
 	}
-	public void setSc1(Integer sc1) {
-		this.sc1 = sc1;
+	public void setFirstScore(Integer sc1) {
+		this.firstScore = sc1;
 	}
-	public Integer getSc2() {
-		return sc2;
+	public Integer getSecondScore() {
+		return secondScore;
 	}
-	public void setSc2(Integer sc2) {
-		this.sc2 = sc2;
+	public void setSecondScore(Integer sc2) {
+		this.secondScore = sc2;
 	}
 	public Integer getS11() {
 		return s11;

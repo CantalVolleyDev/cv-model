@@ -22,10 +22,10 @@ public class MatchValidator extends AbstractDataValidator<Match> {
 			return;
 		}
 		
-		Integer sc1 = object.getSc1();
+		Integer sc1 = object.getFirstScore();
 		if (sc1 == null)
 			throw new DataValidationException("Le score de la première équipe doit être renseigné");
-		Integer sc2 = object.getSc2();
+		Integer sc2 = object.getSecondScore();
 		if (sc2 == null)
 			throw new DataValidationException("Le score de la seconde équipe doit être renseigné");
 		

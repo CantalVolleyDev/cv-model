@@ -31,6 +31,8 @@ public class User {
 	public static final String ADMINISTRATOR_FIELD = "admusr";
 	public static final String IMAGE_FIELD = "imgusr";
 	public static final int IMAGE_FIELD_LENGTH = 5;
+	public static final String IMAGE_VERSION_FIELD = "imvusr";
+	public static final int IMAGE_VERSION_FIELD_LENGTH = 15;
 	public static final String GENDER_FIELD = "genusr";
 	public static final int GENDER_FIELD_LENGTH = 1;
 	
@@ -71,6 +73,10 @@ public class User {
 	@Column(name = IMAGE_FIELD, length = IMAGE_FIELD_LENGTH, columnDefinition = DBTypeConstants.VARCHAR)
 	@Size(max = IMAGE_FIELD_LENGTH, message = "La taille de l'extension de l'image doit être au maximum de {max}")
 	private String image;
+	
+	@Column(name = IMAGE_VERSION_FIELD, length = IMAGE_VERSION_FIELD_LENGTH, columnDefinition = DBTypeConstants.VARCHAR)
+	@Size(max = IMAGE_VERSION_FIELD_LENGTH, message = "La taille de la version de l'image doit être au maximum de {max}")
+	private String imageVersion;
 	
 	@Column(name = GENDER_FIELD, length = GENDER_FIELD_LENGTH, nullable = false, columnDefinition = DBTypeConstants.ENUM)
 	@NotNull(message = "Le genre doit être renseigné")
@@ -130,6 +136,12 @@ public class User {
 	public void setImage(String image) {
 		this.image = image;
 	}
+	public String getImageVersion() {
+		return imageVersion;
+	}
+	public void setImageVersion(String imageVersion) {
+		this.imageVersion = imageVersion;
+	}
 	public User.Gender getGender() {
 		return gender;
 	}
@@ -158,6 +170,8 @@ public class User {
 		builder.append(administrator);
 		builder.append(", image=");
 		builder.append(image);
+		builder.append(", imageVersion=");
+		builder.append(imageVersion);
 		builder.append(", gender=");
 		builder.append(gender);
 		builder.append("]");

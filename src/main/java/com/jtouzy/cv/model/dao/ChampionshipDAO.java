@@ -219,8 +219,8 @@ public class ChampionshipDAO extends AbstractSingleIdentifierDAO<Championship> {
 		if (match.getState() != Match.State.V) {
 			return;
 		}
-		Integer sc1 = match.getSc1();
-		Integer sc2 = match.getSc2();
+		Integer sc1 = match.getFirstScore();
+		Integer sc2 = match.getSecondScore();
 		ChampionshipTeam winnerTeam = firstTeam;
 		ChampionshipTeam looserTeam = secondTeam;
 		Integer winnerScore = sc1;

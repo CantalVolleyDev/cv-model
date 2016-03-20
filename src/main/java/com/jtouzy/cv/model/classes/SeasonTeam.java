@@ -23,6 +23,8 @@ public class SeasonTeam {
 	public static final String GYM_FIELD = "gymeqs";
 	public static final String LABEL_FIELD = "libeqs";
 	public static final int LABEL_FIELD_LENGTH = 40;
+	public static final String REDUCED_LABEL_FIELD = "lireqs";
+	public static final int REDUCED_LABEL_FIELD_LENGTH = 12;
 	public static final String STATE_FIELD = "etaeqs";
 	public static final int STATE_FIELD_LENGTH = 1;
 	public static final String DATE_FIELD = "dateqs";
@@ -30,9 +32,13 @@ public class SeasonTeam {
 	public static final int INFO_FIELD_LENGTH = 40;
 	public static final String IMAGE_FIELD = "imgeqs";
 	public static final int IMAGE_FIELD_LENGTH = 5;
+	public static final String IMAGE_VERSION_FIELD = "imveqs";
+	public static final int IMAGE_VERSION_FIELD_LENGTH = 15;
 	public static final String PLAYER_NUMBER_FIELD = "nbpeqs";
 	public static final String IMAGE_PLAYERS_FIELD = "impeqs";
 	public static final int IMAGE_PLAYERS_FIELD_LENGTH = 5;
+	public static final String IMAGE_PLAYERS_VERSION_FIELD = "ipveqs";
+	public static final int IMAGE_PLAYERS_VERSION_FIELD_LENGTH = 15;
 	
 	@Id
 	@GeneratedValue
@@ -65,6 +71,11 @@ public class SeasonTeam {
 	@Size(max = LABEL_FIELD_LENGTH, message = "La taille du libellé doit être au maximum de {max}")
 	private String label;
 	
+	@Column(name = REDUCED_LABEL_FIELD, nullable = false, length = REDUCED_LABEL_FIELD_LENGTH, columnDefinition = DBTypeConstants.VARCHAR)
+	@NotNull(message = "Le libellé réduit doit être renseigné")
+	@Size(max = REDUCED_LABEL_FIELD_LENGTH, message = "La taille du libellé réduit doit être au maximum de {max}")
+	private String reducedLabel;
+	
 	@Column(name = STATE_FIELD, nullable = false, length = STATE_FIELD_LENGTH, columnDefinition = DBTypeConstants.ENUM)
 	@NotNull(message = "L'état doit être renseigné")
 	private SeasonTeam.State state;
@@ -81,9 +92,17 @@ public class SeasonTeam {
 	@Size(max = IMAGE_FIELD_LENGTH, message = "La taille de l'extension de l'image doit être au maximum de {max}")
 	private String image;
 	
+	@Column(name = IMAGE_VERSION_FIELD, length = IMAGE_VERSION_FIELD_LENGTH, columnDefinition = DBTypeConstants.VARCHAR)
+	@Size(max = IMAGE_VERSION_FIELD_LENGTH, message = "La taille de la version de l'image doit être au maximum de {max}")
+	private String imageVersion;
+	
 	@Column(name = IMAGE_PLAYERS_FIELD, length = IMAGE_PLAYERS_FIELD_LENGTH, columnDefinition = DBTypeConstants.VARCHAR)
 	@Size(max = IMAGE_PLAYERS_FIELD_LENGTH, message = "La taille de l'extension de l'image des joueurs doit être au maximum de {max}")
 	private String imagePlayers;
+	
+	@Column(name = IMAGE_PLAYERS_VERSION_FIELD, length = IMAGE_PLAYERS_VERSION_FIELD_LENGTH, columnDefinition = DBTypeConstants.VARCHAR)
+	@Size(max = IMAGE_PLAYERS_VERSION_FIELD_LENGTH, message = "La taille de la version de l'image des joueurs doit être au maximum de {max}")
+	private String imagePlayersVersion;
 	
 	@Column(name = PLAYER_NUMBER_FIELD, nullable = false, columnDefinition = DBTypeConstants.INTEGER)
 	@NotNull(message = "Le nombre de joueur de l'équipe (pour un match) doit être renseigné")
@@ -155,6 +174,24 @@ public class SeasonTeam {
 	public void setImagePlayers(String imagePlayers) {
 		this.imagePlayers = imagePlayers;
 	}
+	public String getImageVersion() {
+		return imageVersion;
+	}
+	public void setImageVersion(String imageVersion) {
+		this.imageVersion = imageVersion;
+	}
+	public String getImagePlayersVersion() {
+		return imagePlayersVersion;
+	}
+	public void setImagePlayersVersion(String imagePlayersVersion) {
+		this.imagePlayersVersion = imagePlayersVersion;
+	}
+	public String getReducedLabel() {
+		return reducedLabel;
+	}
+	public void setReducedLabel(String reducedLabel) {
+		this.reducedLabel = reducedLabel;
+	}
 	
 	@Override
 	public String toString() {
@@ -177,8 +214,12 @@ public class SeasonTeam {
 		builder.append(information);
 		builder.append(", image=");
 		builder.append(image);
+		builder.append(", imageVersion=");
+		builder.append(imageVersion);
 		builder.append(", imagePlayers=");
 		builder.append(imagePlayers);
+		builder.append(", imagePlayersVersion=");
+		builder.append(imagePlayersVersion);
 		builder.append(", playersNumber=");
 		builder.append(playersNumber);
 		builder.append("]");

@@ -1,5 +1,6 @@
 package com.jtouzy.cv.model.dao;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -45,8 +46,26 @@ public class MatchDAO extends AbstractSingleIdentifierDAO<Match> {
 			orContext.addEqualsCriterion(Match.SECOND_TEAM_FIELD, teamId);
 			query.context().addOrCriterion(orContext);
 		}
+		query.context().addDirectJoin(Championship.class)
+	     			   .addDirectJoin(Gym.class)
+	     			   .addDirectJoin(ModelContext.getTableContext(Competition.class), Championship.TABLE);
 		query.context().limitTo(limitTo);
 		query.context().orderBy(Match.DATE_FIELD, false);
+		return query.many();
+	}
+	
+	public List<Match> getAllByDate(LocalDate date)
+	throws QueryException {
+		Query<Match> query = queryWithTeamDetails();
+		List<String> dates = new ArrayList<>();
+		dates.add(date.toString() + " 00:00");
+		dates.add(date.toString() + " 23:59");
+		query.context().addDirectJoin(Championship.class)
+	     			   .addDirectJoin(ModelContext.getTableContext(Competition.class), Championship.TABLE)
+	     			   .addBetweenCriterion(Match.DATE_FIELD, dates);
+		query.context().orderBy(Match.DATE_FIELD, true);
+		query.context().orderBy(Competition.class, Competition.ORDER_FIELD, true);
+		query.context().orderBy(Championship.class, Championship.ORDER_FIELD, true);
 		return query.many();
 	}
 	

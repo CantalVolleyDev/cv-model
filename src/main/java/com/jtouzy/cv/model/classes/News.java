@@ -27,6 +27,8 @@ public class News {
 	public final static String PUBLISH_DATE_FIELD = "dpunws";
 	public final static String STATE_FIELD = "stanws";
 	public final static String CATEGORY_FIELD = "catnws";
+	public final static String IMAGE_FIELD = "imgnws";
+	public final static String IMAGE_VERSION_FIELD = "imvnws";
 	
 	@Id
 	@GeneratedValue
@@ -64,6 +66,12 @@ public class News {
 	@Column(name = CATEGORY_FIELD, length = 40, nullable = false, columnDefinition = DBTypeConstants.VARCHAR)
 	@NotNull(message = "La catégorie doit être renseignée")
 	private String category;
+	
+	@Column(name = IMAGE_FIELD, length = 5, nullable = true, columnDefinition = DBTypeConstants.VARCHAR)
+	private String image;
+	
+	@Column(name = IMAGE_VERSION_FIELD, length = 15, nullable = true, columnDefinition = DBTypeConstants.VARCHAR)
+	private String imageVersion;
 	
 	public Integer getIdentifier() {
 		return identifier;
@@ -112,6 +120,18 @@ public class News {
 	}
 	public void setCategory(String category) {
 		this.category = category;
+	}
+	public String getImage() {
+		return image;
+	}
+	public void setImage(String image) {
+		this.image = image;
+	}
+	public String getImageVersion() {
+		return imageVersion;
+	}
+	public void setImageVersion(String imageVersion) {
+		this.imageVersion = imageVersion;
 	}
 
 	public enum State {
