@@ -116,17 +116,15 @@ public class ChampionshipDAO extends AbstractSingleIdentifierDAO<Championship> {
 			this.connection.commit();
 			this.connection.setAutoCommit(true);
 		} catch (SQLException | QueryException ex) {
-			throw new RankingsCalculateException(ex);
-		} finally {
 			try {
-				if (this.connection.getAutoCommit()) {
+				if (!this.connection.getAutoCommit()) {
 					this.connection.rollback();
 					this.connection.setAutoCommit(true);
 				}
-			} catch (SQLException ex) {
+			} catch (SQLException ex2) {
 				throw new RankingsCalculateException(ex);
 			}
-			
+			throw new RankingsCalculateException(ex);
 		}
 	}
 	
