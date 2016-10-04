@@ -185,7 +185,7 @@ public class ChampionshipDAO extends AbstractSingleIdentifierDAO<Championship> {
 	
 	public void updateRankings(Match match)
 	throws RankingsCalculateException, DataValidationException {
-		if (match.getState() != Match.State.V) {
+		if (match.getState() != Match.State.V && match.getState() != Match.State.F) {
 			return;
 		}
 		try {
@@ -214,52 +214,56 @@ public class ChampionshipDAO extends AbstractSingleIdentifierDAO<Championship> {
 	}
 	
 	public void updateRankings(ChampionshipTeam firstTeam, ChampionshipTeam secondTeam, Match match) {
-		if (match.getState() != Match.State.V) {
-			return;
-		}
-		Integer sc1 = match.getFirstScore();
-		Integer sc2 = match.getSecondScore();
-		ChampionshipTeam winnerTeam = firstTeam;
-		ChampionshipTeam looserTeam = secondTeam;
-		Integer winnerScore = sc1;
-		Integer looserScore = sc2;
-		Integer winnerPoints = (match.getS11() + match.getS21() + match.getS31()) +
-				               (match.getS41() == null ? 0 : match.getS41()) +
-				               (match.getS51() == null ? 0 : match.getS51());
-		Integer looserPoints = (match.getS12() + match.getS22() + match.getS32()) +
-	               			   (match.getS42() == null ? 0 : match.getS42()) +
-	               			   (match.getS52() == null ? 0 : match.getS52());
-		if (sc2 > sc1) {
-			winnerTeam = secondTeam;
-			looserTeam = firstTeam;
-			winnerScore = sc2;
-			looserScore = sc1;
-			int svg = looserPoints;
-			looserPoints = winnerPoints;
-			winnerPoints = svg;
-		}
-		winnerTeam.setPoints(winnerTeam.getPoints() + 3);
-		winnerTeam.setPlay(winnerTeam.getPlay() + 1);
-		winnerTeam.setSetsFor(winnerTeam.getSetsFor() + winnerScore);
-		winnerTeam.setSetsAgainst(winnerTeam.getSetsAgainst() + looserScore);
-		winnerTeam.setPointsFor(winnerTeam.getPointsFor() + winnerPoints);
-		winnerTeam.setPointsAgainst(winnerTeam.getPointsAgainst() + looserPoints);
-		looserTeam.setPlay(looserTeam.getPlay() + 1);
-		looserTeam.setSetsFor(looserTeam.getSetsFor() + looserScore);
-		looserTeam.setSetsAgainst(looserTeam.getSetsAgainst() + winnerScore);
-		looserTeam.setPointsFor(looserTeam.getPointsFor() + looserPoints);
-		looserTeam.setPointsAgainst(looserTeam.getPointsAgainst() + winnerPoints);
-		winnerTeam.setWin(winnerTeam.getWin() + 1);
-		if (match.isForfeit()) {
-			looserTeam.setForfeit(looserTeam.getForfeit() + 1);
-		} else {
-			if (looserScore == 2) {
-				looserTeam.setLoose3By2(looserTeam.getLoose3By2() + 1);
-				looserTeam.setPoints(looserTeam.getPoints() + 2);
-			} else {
-				looserTeam.setLoose(looserTeam.getLoose() + 1);
-				looserTeam.setPoints(looserTeam.getPoints() + 1);
+		if (match.getState() == Match.State.V) {
+			Integer sc1 = match.getFirstScore();
+			Integer sc2 = match.getSecondScore();
+			ChampionshipTeam winnerTeam = firstTeam;
+			ChampionshipTeam looserTeam = secondTeam;
+			Integer winnerScore = sc1;
+			Integer looserScore = sc2;
+			Integer winnerPoints = (match.getS11() + match.getS21() + match.getS31()) +
+					               (match.getS41() == null ? 0 : match.getS41()) +
+					               (match.getS51() == null ? 0 : match.getS51());
+			Integer looserPoints = (match.getS12() + match.getS22() + match.getS32()) +
+		               			   (match.getS42() == null ? 0 : match.getS42()) +
+		               			   (match.getS52() == null ? 0 : match.getS52());
+			if (sc2 > sc1) {
+				winnerTeam = secondTeam;
+				looserTeam = firstTeam;
+				winnerScore = sc2;
+				looserScore = sc1;
+				int svg = looserPoints;
+				looserPoints = winnerPoints;
+				winnerPoints = svg;
 			}
+			winnerTeam.setPoints(winnerTeam.getPoints() + 3);
+			winnerTeam.setPlay(winnerTeam.getPlay() + 1);
+			winnerTeam.setSetsFor(winnerTeam.getSetsFor() + winnerScore);
+			winnerTeam.setSetsAgainst(winnerTeam.getSetsAgainst() + looserScore);
+			winnerTeam.setPointsFor(winnerTeam.getPointsFor() + winnerPoints);
+			winnerTeam.setPointsAgainst(winnerTeam.getPointsAgainst() + looserPoints);
+			looserTeam.setPlay(looserTeam.getPlay() + 1);
+			looserTeam.setSetsFor(looserTeam.getSetsFor() + looserScore);
+			looserTeam.setSetsAgainst(looserTeam.getSetsAgainst() + winnerScore);
+			looserTeam.setPointsFor(looserTeam.getPointsFor() + looserPoints);
+			looserTeam.setPointsAgainst(looserTeam.getPointsAgainst() + winnerPoints);
+			winnerTeam.setWin(winnerTeam.getWin() + 1);
+			if (match.isForfeit()) {
+				looserTeam.setForfeit(looserTeam.getForfeit() + 1);
+			} else {
+				if (looserScore == 2) {
+					looserTeam.setLoose3By2(looserTeam.getLoose3By2() + 1);
+					looserTeam.setPoints(looserTeam.getPoints() + 2);
+				} else {
+					looserTeam.setLoose(looserTeam.getLoose() + 1);
+					looserTeam.setPoints(looserTeam.getPoints() + 1);
+				}
+			}
+		} else if (match.getState() == Match.State.F) {
+			firstTeam.setPlay(firstTeam.getPlay() + 1);
+			secondTeam.setPlay(secondTeam.getPlay() + 1);
+			firstTeam.setForfeit(firstTeam.getForfeit() + 1);
+			secondTeam.setForfeit(secondTeam.getForfeit() + 1);
 		}
 	}
 }

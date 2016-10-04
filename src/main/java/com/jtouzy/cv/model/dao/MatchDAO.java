@@ -108,7 +108,7 @@ public class MatchDAO extends AbstractSingleIdentifierDAO<Match> {
 	public List<Match> getAllValidateByChampionship(Integer championshipId)
 	throws QueryException {
 		Query<Match> query = queryByChampionship(championshipId);
-		query.context().addEqualsCriterion(Match.STATE_FIELD, Match.State.V);
+		query.context().addInCriterion(Match.STATE_FIELD, Arrays.asList(Match.State.V, Match.State.F));
 		return query.many();
 	}
 	

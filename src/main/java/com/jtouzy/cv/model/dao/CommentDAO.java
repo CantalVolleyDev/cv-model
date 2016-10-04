@@ -58,10 +58,12 @@ public class CommentDAO extends AbstractSingleIdentifierDAO<Comment> {
 				playersToExclude.stream()
 								.map(p -> p.getPlayer().getIdentifier())
 								.collect(Collectors.toList()));
-		query.context().addInCriterion(Comment.ENTITY_VALUE_FIELD, 
-				lastMatchs.stream()
-				          .map(m -> m.getIdentifier())
-				          .collect(Collectors.toList()));
+		if (!lastMatchs.isEmpty()){
+			query.context().addInCriterion(Comment.ENTITY_VALUE_FIELD, 
+					lastMatchs.stream()
+					          .map(m -> m.getIdentifier())
+					          .collect(Collectors.toList()));
+		}
 		return query.many();
 	}
 	
